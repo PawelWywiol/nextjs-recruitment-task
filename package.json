@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "prisma generate"
+    "generate-types": "prisma generate",
+    "test": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -35,13 +36,20 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
+    "jsdom": "^26.1.0",
     "prisma": "^6.12.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }
