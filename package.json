@@ -9,6 +9,7 @@
     "lint": "next lint",
     "generate-types": "prisma generate",
     "test": "vitest",
+    "type-check": "tsc --noEmit",
     "prepare": "husky"
   },
   "dependencies": {
