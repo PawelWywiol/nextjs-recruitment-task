@@ -2,6 +2,12 @@
 
 ### Run Development Environment
 
+To run the development environment, you need to set up your environment variables first. Copy the example environment file:
+
+```bash
+cp .env.example .env.local
+```
+
 ```bash
 npm install
 npm run generate-types
@@ -12,6 +18,12 @@ npm run dev
 ```
 
 ### Run Production Environment
+
+To run the production environment, you also need to set up your environment variables. Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
 
 ```bash
 npm install

@@ -3,4 +3,4 @@
 FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
 [ -z "$FILES" ] && exit 0
 
-npx --no-install lint-staged --no-stash -x
+npx --no-install lint-staged --no-stash
