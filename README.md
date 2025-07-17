@@ -45,7 +45,17 @@ docker run --env-file .env -p 3000:3000 nextjs-recruitment-task
 or using Docker Compose:
 
 ```bash
-docker compose -f docker-compose.production.yml up --build
+# export DATABASE_URL to connect to the database in build stage
+export DATABASE_URL=postgresql://myuser:mypassword@host.docker.internal:5432/mydatabase
+
+# run db container
+docker compose up -d
+
+# build and run the Next.js app
+docker compose -f docker-compose.production.yml build --no-cache --build-arg DATABASE_URL=$DATABASE_URL
+
+# run the Next.js app
+docker compose -f docker-compose.production.yml up -d
 ```
 
 ## Task

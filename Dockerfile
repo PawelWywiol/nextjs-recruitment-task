@@ -6,7 +6,10 @@ ENV NODE_ENV=production
 RUN npm ci --omit=dev && npm cache clean --force
 
 FROM base AS builder
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 COPY . .
+RUN rm -rf .next
 RUN npm run generate-types
 RUN npm run build
 

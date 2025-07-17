@@ -13,5 +13,12 @@ services:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
+    networks:
+      - nextjs-task-network
+
 volumes:
   nextjs-task-db-data:
+
+networks:
+  nextjs-task-network:
+    name: nextjs-task-network
