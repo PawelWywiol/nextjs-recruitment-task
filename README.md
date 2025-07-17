@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+### Run Development Environment
+
+```bash
+npm install
+npm run generate-types
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Run Production Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run generate-types
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Build Docker Image and Run Container
 
-## Learn More
+```bash
+docker build -t nextjs-recruitment-task .
+```
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+docker run --env-file .env -p 3000:3000 nextjs-recruitment-task
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+or using Docker Compose:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+docker compose -f docker-compose.production.yml up --build
+```
 
-## Deploy on Vercel
+## Task
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create a NextJS application which allows you to manage users' addresses. The database schema with sample records is provided for you, you can set it up by running:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+docker compose up
+```
+
+## UI Requirements
+
+1. The UI should only include what's required in task's description. There is no need to build authentication, menus or any features besides what's required.
+2. The UI should consist of:
+
+- A paginated users' list. Add a mocked button to **Create** a new user above the list and in each record, a context menu with mocked **Edit** and **Delete** buttons.
+- A paginated users' addresses list. The list should be visible after clicking a user record in the users' list.
+- In the addresses list, include a context menu where you can **Edit** and **Delete** an address record.
+- Add the ability to **Create** a new user address.
+- **Create** and **Edit** forms should be implemented in modals.
+- When inputting address fields, display a preview of the full address in the realtime in the following format:
+
+```
+<street> <building_number>
+<post_code> <city>
+<country_code>
+```
+
+3. You may use any UI library: MUI, AntD, etc.
+4. Handle data validation errors coming from the server.
+
+## Server Requirements
+
+1. Use the database schema provided. Do not modify it.
+2. Implement ["Server Actions"](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations) which the frontend should use to interact with the database.
+3. You may use any ORM or Query Builder.
+4. Introduce simple data validation. Nothing fancy, you can use constraints from the database schema. Country codes use ISO3166-1 alpha-3 standard.
+
+## General Requirements
+
+1. Expect the application to eventually include many similar CRUD components (i.e. "users_tasks", "users_permissions", etc.), make your code modular, extensible and generic so that similar modules can be developed with less overhead.
+2. Keep the code clean, scalable, follow known conding conventions, paradigms, patterns, etc.
+3. Use TypeScript.
+4. You do not have to deploy the application, but prepare the codebase for deployment to an environment of your choice.

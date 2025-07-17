@@ -1,0 +1,39 @@
+name: nextjs-task
+services:
+  postgres:
+    image: postgres:15
+    container_name: nextjs-task-db
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - nextjs-task-db-data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '5432:5432'
+    networks:
+      - default
+
+  nextjs-recruitment-task:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs-recruitment-task
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+volumes:
+  nextjs-task-db-data:
+
+networks:
+  default:
+    driver: bridge
