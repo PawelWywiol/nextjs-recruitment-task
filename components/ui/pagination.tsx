@@ -107,7 +107,12 @@ export function Pagination({
     <PaginationWrapper>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href={`${pathPrefix}${Math.max(1, page - 1)}`} />
+          <PaginationPrevious
+            href={`${pathPrefix}${Math.max(1, page - 1)}`}
+            aria-disabled={page <= 1}
+            tabIndex={page <= 1 ? -1 : undefined}
+            className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
+          />
         </PaginationItem>
         {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
           <PaginationItem key={p}>
@@ -117,7 +122,12 @@ export function Pagination({
           </PaginationItem>
         ))}
         <PaginationItem>
-          <PaginationNext href={`${pathPrefix}${Math.min(pages, page + 1)}`} />
+          <PaginationNext
+            href={`${pathPrefix}${Math.min(pages, page + 1)}`}
+            aria-disabled={page >= pages}
+            tabIndex={page >= pages ? -1 : undefined}
+            className={page >= pages ? 'pointer-events-none opacity-50' : ''}
+          />
         </PaginationItem>
       </PaginationContent>
     </PaginationWrapper>
