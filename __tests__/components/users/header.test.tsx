@@ -1,5 +1,5 @@
-import { expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { expect, test } from 'vitest';
 import { UsersHeader } from '@/components/users/header';
 
 test('UsersHeader', () => {

@@ -11,7 +11,7 @@ export type THandleErrorsResult<TResultData = unknown> = Promise<
 >;
 
 export const handleErrors = async <TResultData = unknown>(
-  formCall: () => Promise<TResultData>
+  formCall: () => Promise<TResultData>,
 ): THandleErrorsResult<TResultData> => {
   try {
     const data = await formCall();

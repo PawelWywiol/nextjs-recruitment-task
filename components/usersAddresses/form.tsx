@@ -1,5 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
 import { Calendar } from '@/components/ui/calendar';
 import {
   Form,
@@ -17,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { handleErrors } from '@/lib/errorHandler';
 import { cn } from '@/lib/utils';
 import { upsertUserAddress } from '@/services/usersAddresses/actions';
 import { ISO_COUNTRY_CODES } from '@/services/usersAddresses/config';
@@ -26,16 +33,8 @@ import {
   type UserAddress,
   userAddressSchema,
 } from '@/services/usersAddresses/validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-
-import { handleErrors } from '@/lib/errorHandler';
-import { useRouter } from 'next/navigation';
 import { UsersAddressesPreview } from './preview';
 
 const DEFAULT_BUTTON_STATE = {
@@ -149,7 +148,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
                         variant={'outline'}
                         className={cn(
                           'w-[240px] pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
+                          !field.value && 'text-muted-foreground',
                         )}
                       >
                         {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}

@@ -1,16 +1,16 @@
 'use server';
 
+import type { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { GET_USERS_ADDRESSES_PAYLOAD, USERS_ADDRESSES_PER_PAGE } from './config';
-import { type userAddressSchema, validateUserAddress } from './validation';
-import type { z } from 'zod';
 import type { GetUsersAddressesItem } from './types';
 import { normalizeToSeconds } from './utils';
+import { type userAddressSchema, validateUserAddress } from './validation';
 
 export const getUserAddresses = async (
   userId: number,
   page = 1,
-  itemsPerPage = USERS_ADDRESSES_PER_PAGE
+  itemsPerPage = USERS_ADDRESSES_PER_PAGE,
 ) => {
   const [items, total] = await Promise.all([
     prisma.usersAddress.findMany({
@@ -38,7 +38,7 @@ export const getUserAddresses = async (
 
 export const upsertUserAddress = async (
   item: GetUsersAddressesItem,
-  values: z.infer<typeof userAddressSchema>
+  values: z.infer<typeof userAddressSchema>,
 ) => {
   const validationResult = validateUserAddress(values);
 

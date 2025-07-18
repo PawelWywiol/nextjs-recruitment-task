@@ -1,12 +1,12 @@
-import type { GetUsersItem } from '@/services/users/types';
-import { Button } from '../ui/button';
-import { Header } from '../ui/header';
-import Link from 'next/link';
 import { ChevronLeftIcon } from 'lucide-react';
-import { EditUserAddressDialog } from './dialog';
-import { DialogTrigger } from '../ui/dialog';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import Link from 'next/link';
+import type { GetUsersItem } from '@/services/users/types';
 import { DEFAULT_USER_ADDRESS } from '@/services/usersAddresses/config';
+import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import { Button } from '../ui/button';
+import { DialogTrigger } from '../ui/dialog';
+import { Header } from '../ui/header';
+import { EditUserAddressDialog } from './dialog';
 
 export const UsersAddressesHeader = ({ user }: { user: GetUsersItem }) => {
   const item: GetUsersAddressesItem = {

@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
 import { EllipsisVerticalIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { handleErrors } from '@/lib/errorHandler';
+import { deleteUserAddress } from '@/services/usersAddresses/actions';
+import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
 import { Button } from '../ui/button';
 import { DialogTrigger } from '../ui/dialog';
 import {
@@ -13,8 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { EditUserAddressDialog } from './dialog';
-import { deleteUserAddress } from '@/services/usersAddresses/actions';
-import { handleErrors } from '@/lib/errorHandler';
 
 export const AddressContextMenu = ({ item }: { item: GetUsersAddressesItem }) => {
   const [isPending, setPending] = useState(false);
