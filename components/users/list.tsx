@@ -1,6 +1,8 @@
 import { EllipsisVerticalIcon } from 'lucide-react';
 import Link from 'next/link';
+
 import type { GetUsersItem } from '@/services/users/types';
+
 import { Button } from '../ui/button';
 import {
   DropdownMenu,

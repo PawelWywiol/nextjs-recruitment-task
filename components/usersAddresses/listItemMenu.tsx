@@ -3,9 +3,13 @@
 import { EllipsisVerticalIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+
 import { handleErrors } from '@/lib/errorHandler';
 import { deleteUserAddress } from '@/services/usersAddresses/actions';
 import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+
+import { EditUserAddressDialog } from './dialog';
+
 import { Button } from '../ui/button';
 import { DialogTrigger } from '../ui/dialog';
 import {
@@ -14,7 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { EditUserAddressDialog } from './dialog';
 
 export const AddressContextMenu = ({ item }: { item: GetUsersAddressesItem }) => {
   const [isPending, setPending] = useState(false);

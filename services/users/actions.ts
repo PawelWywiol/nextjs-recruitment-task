@@ -1,7 +1,8 @@
 'use server';
 
-import prisma from '../../lib/prisma';
 import { GET_USERS_PAYLOAD, USERS_PER_PAGE } from './config';
+
+import prisma from '../../lib/prisma';
 
 export const getUsers = async (page = 1, itemsPerPage = USERS_PER_PAGE) => {
   const [items, total] = await Promise.all([

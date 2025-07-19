@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
-import { UserAddresses } from '@/components/usersAddresses/userAddresses';
+
 import { getUser } from '@/services/users/actions';
+
+import { UserAddresses } from '@/components/usersAddresses/userAddresses';
 
 export default async function UserAddressesPage(props: {
   params: Promise<{ id: string; page: string }>;

@@ -1,3 +1,7 @@
+import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+
+import { UserAddressForm } from './form';
+
 import {
   Dialog,
   DialogContent,
@@ -5,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
-import { UserAddressForm } from './form';
 
 export const EditUserAddressDialog = ({
   item,

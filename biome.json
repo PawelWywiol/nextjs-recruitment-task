@@ -44,5 +44,27 @@
       "bracketSpacing": true,
       "semicolons": "always"
     }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              ["@/assets/**"],
+              ":BLANK_LINE:",
+              ["@/common/**", "@/lib/**", "@/services/**", "@/utils/**"],
+              ":BLANK_LINE:",
+              ["./**"],
+              ":BLANK_LINE:",
+              { "type": true }
+            ]
+          }
+        }
+      }
+    }
   }
 }

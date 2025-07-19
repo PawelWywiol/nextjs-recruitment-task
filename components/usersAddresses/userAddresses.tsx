@@ -1,9 +1,11 @@
 import { handleErrors } from '@/lib/errorHandler';
 import type { GetUsersItem } from '@/services/users/types';
 import { getUserAddresses } from '@/services/usersAddresses/actions';
-import { Pagination } from '../ui/pagination';
+
 import { UsersAddressesHeader } from './header';
 import { UsersAddressesList } from './list';
+
+import { Pagination } from '../ui/pagination';
 
 export const UserAddresses = async ({ user, page }: { user: GetUsersItem; page: number }) => {
   const data = await handleErrors(() => getUserAddresses(user.id, page));
