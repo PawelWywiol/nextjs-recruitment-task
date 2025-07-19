@@ -16,6 +16,7 @@ import {
   isAddressType,
   type UserAddress,
   userAddressSchema,
+  validateUserAddress,
 } from '@/services/usersAddresses/validation';
 
 import { UsersAddressesPreview } from './preview';
@@ -75,6 +76,20 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
       textColor: '',
     });
 
+    const validationResult = validateUserAddress(values);
+
+    if (!validationResult.success) {
+      setButtonState({
+        disabled: true,
+        temporary: true,
+        label: 'Validation error. Please check your input.',
+        backgroundColor: 'bg-red-500',
+        textColor: 'text-white',
+      });
+
+      return;
+    }
+
     const data = await handleErrors(() => upsertUserAddress(item, values));
 
     startTransition(router.refresh);
@@ -119,7 +134,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="addressType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Address type'}</FormLabel>
+                <FormLabel>{'Address Type'}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
@@ -142,7 +157,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="validFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Valid from'}</FormLabel>
+                <FormLabel>{'Valid From'}</FormLabel>
 
                 <Popover>
                   <PopoverTrigger asChild>
@@ -193,7 +208,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="buildingNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Building number'}</FormLabel>
+                <FormLabel>{'Building Number'}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -208,7 +223,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="postCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Post code'}</FormLabel>
+                <FormLabel>{'Post Code'}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

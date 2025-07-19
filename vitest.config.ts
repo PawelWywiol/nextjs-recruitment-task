@@ -9,5 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: './vitest.setup.ts',
     dir: './__tests__',
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+    },
   },
 });

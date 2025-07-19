@@ -32,12 +32,11 @@ const UserListItem = ({ item: { id, firstName, lastName } }: { item: GetUsersIte
   </li>
 );
 
-export const UsersList = ({ items = [] }: { items?: GetUsersItem[] }) => {
-  return (
+export const UsersList = ({ items = [] }: { items?: GetUsersItem[] }) =>
+  items.length > 0 && (
     <ul className="flex flex-col gap-2 w-full">
       {items.map((item) => (
         <UserListItem key={item.id} item={item} />
       ))}
     </ul>
   );
-};
