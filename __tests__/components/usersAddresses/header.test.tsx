@@ -27,6 +27,6 @@ describe('UsersAddressesHeader', () => {
     render(<UsersAddressesHeader user={user} />);
 
     expect(screen.getByRole('heading', { level: 1, name: 'John Doe' })).toBeDefined();
-    expect(screen.getByRole('button', { name: 'Create address' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Create Address' })).toBeDefined();
   });
 });
