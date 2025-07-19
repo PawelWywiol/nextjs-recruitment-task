@@ -26,9 +26,6 @@ describe('UsersAddressesPreview', () => {
 
     const textLines = fullText?.trim();
 
-    console.log('Text lines:', textLines);
-
-    // test by regular expression
     expect(textLines).toMatch(/Address preview.*Test Street 1.*12345, Test City.*POL/s);
   });
 });

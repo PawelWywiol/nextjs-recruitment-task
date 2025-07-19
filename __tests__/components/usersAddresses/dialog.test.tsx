@@ -1,4 +1,5 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 
 import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
@@ -19,7 +20,8 @@ vi.mock('@/services/usersAddresses/actions', () => ({
 }));
 
 describe('EditUserAddressDialog', () => {
-  test('renders EditUserAddressDialog', () => {
+  test('renders EditUserAddressDialog', async () => {
+    const user = userEvent.setup();
     const item: GetUsersAddressesItem = {
       userId: 1,
       addressType: 'HOME',
@@ -41,9 +43,8 @@ describe('EditUserAddressDialog', () => {
 
     expect(screen.getByRole('button', { name: 'Create address' })).toBeDefined();
 
-    act(() => {
-      screen.getByRole('button', { name: 'Create address' }).click();
-    });
+    const submitButton = screen.getByRole('button', { name: 'Create address' });
+    await user.click(submitButton);
 
     expect(screen.getByRole('dialog')).toBeDefined();
   });

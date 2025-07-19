@@ -1,5 +1,6 @@
-import { act, render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { upsertUserAddress } from '@/services/usersAddresses/actions';
 import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
@@ -18,7 +19,13 @@ vi.mock('@/services/usersAddresses/actions', () => ({
 }));
 
 describe('UserAddressForm', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   test('renders UserAddressForm', async () => {
+    const user = userEvent.setup();
+
     const item: GetUsersAddressesItem = {
       userId: 1,
       addressType: 'HOME',
@@ -51,13 +58,33 @@ describe('UserAddressForm', () => {
 
     expect(screen.getByRole('button', { name: 'Submit' })).toBeDefined();
 
-    await act(async () => {
-      screen.getByRole('button', { name: 'Submit' }).click();
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    await user.click(submitButton);
 
-    const mockUpsert = vi.mocked(upsertUserAddress);
+    expect(vi.mocked(upsertUserAddress)).toHaveBeenCalled();
+  });
 
-    expect(mockUpsert).toHaveBeenCalled();
+  test('upsertUserAddress should not be called when form is invalid', async () => {
+    const user = userEvent.setup();
+    const item: GetUsersAddressesItem = {
+      userId: 1,
+      addressType: 'HOME',
+      validFrom: new Date(),
+      postCode: '',
+      city: '',
+      countryCode: 'XXX',
+      street: '',
+      buildingNumber: '',
+    };
+
+    render(<UserAddressForm item={item} />);
+
+    const streetInput = screen.getByLabelText('Street');
+    await user.clear(streetInput);
+
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    await user.click(submitButton);
+
+    expect(vi.mocked(upsertUserAddress)).not.toHaveBeenCalled();
   });
 });
