@@ -13,7 +13,6 @@
     "test": "vitest",
     "test:cov": "vitest run --coverage",
     "test:e2e": "playwright test --config=playwright.config.ts",
-    "test:e2e:local": "playwright test --config=playwright.config.local.ts",
     "test:e2e:raport": "playwright show-report",
     "type-check": "tsc --noEmit",
     "prepare": "husky"

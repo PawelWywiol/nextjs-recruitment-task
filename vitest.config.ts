@@ -11,6 +11,7 @@ export default defineConfig({
     dir: './__tests__',
     coverage: {
       reporter: ['text', 'json', 'html'],
+      include: ['components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'services/**/*.{ts,tsx}'],
     },
   },
 });

@@ -58,6 +58,22 @@ docker compose -f docker-compose.production.yml build --no-cache --build-arg DAT
 docker compose -f docker-compose.production.yml up -d
 ```
 
+## Testing
+
+To run the tests, you can use the following command:
+
+```bash
+npm run test
+```
+
+## End-to-End Testing
+
+To run the end-to-end tests, you can use the following command:
+
+```bash
+npm run test:e2e
+```
+
 ## Task
 
 Create a NextJS application which allows you to manage users' addresses. The database schema with sample records is provided for you, you can set it up by running:
