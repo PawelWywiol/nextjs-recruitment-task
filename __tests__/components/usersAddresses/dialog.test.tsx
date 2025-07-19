@@ -36,14 +36,14 @@ describe('EditUserAddressDialog', () => {
     render(
       <EditUserAddressDialog item={item}>
         <DialogTrigger asChild>
-          <Button>{'Create address'}</Button>
+          <Button>{'Create Address'}</Button>
         </DialogTrigger>
       </EditUserAddressDialog>,
     );
 
-    expect(screen.getByRole('button', { name: 'Create address' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Create Address' })).toBeDefined();
 
-    const submitButton = screen.getByRole('button', { name: 'Create address' });
+    const submitButton = screen.getByRole('button', { name: 'Create Address' });
     await user.click(submitButton);
 
     expect(screen.getByRole('dialog')).toBeDefined();

@@ -29,7 +29,7 @@ export const UsersAddressesHeader = ({ user }: { user: GetUsersItem }) => {
       </div>
       <EditUserAddressDialog item={item}>
         <DialogTrigger asChild>
-          <Button>{'Create address'}</Button>
+          <Button>{'Create Address'}</Button>
         </DialogTrigger>
       </EditUserAddressDialog>
     </Header>
