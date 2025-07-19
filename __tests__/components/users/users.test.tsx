@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
+import { handleErrors } from '@/lib/errorHandler';
+import { getUsers } from '@/services/users/actions';
+
 import { Users } from '@/components/users/users';
 
 vi.mock('@/services/users/actions', () => ({
@@ -10,9 +13,6 @@ vi.mock('@/services/users/actions', () => ({
 vi.mock('@/lib/errorHandler', () => ({
   handleErrors: vi.fn(),
 }));
-
-import { handleErrors } from '@/lib/errorHandler';
-import { getUsers } from '@/services/users/actions';
 
 describe('Users', () => {
   beforeEach(() => {
