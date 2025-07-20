@@ -20,7 +20,7 @@ test.describe('Progressive Tests', () => {
     // Check if pagination has buttons with numbers
     const paginationButtons = pagination.getByRole('link').filter({ hasText: /^\d+$/ });
     const paginationButtonsCount = await paginationButtons.count();
-    await expect(paginationButtonsCount).toBeGreaterThan(0);
+    expect(paginationButtonsCount).toBeGreaterThan(0);
 
     // Click on a random pagination button
     const randomPaginationButton = paginationButtons.nth(
@@ -34,7 +34,7 @@ test.describe('Progressive Tests', () => {
 
     // Check page url to ensure it has changed
     const currentUrl = page.url();
-    await expect(currentUrl).toContain(`/users/${randomPaginationButtonText}`);
+    expect(currentUrl).toContain(`/users/${randomPaginationButtonText}`);
 
     // Check if the page has loaded by looking for the main heading
     const nextUsersPageHeading = page.getByRole('heading', { name: 'Users' });
@@ -46,7 +46,7 @@ test.describe('Progressive Tests', () => {
     // Get items in the list
     const usersListItems = usersList.getByRole('listitem');
     const usersListItemsCount = await usersListItems.count();
-    await expect(usersListItemsCount).toBeGreaterThan(0);
+    expect(usersListItemsCount).toBeGreaterThan(0);
 
     // Select a random user from the list
     const randomUserListItem = usersListItems.nth(Math.floor(Math.random() * usersListItemsCount));
@@ -60,7 +60,7 @@ test.describe('Progressive Tests', () => {
     const randomUserLinkText = (await randomUserLink.textContent()) ?? '';
 
     // Check if the link text is not empty
-    await expect(randomUserLinkText).not.toBe('');
+    expect(randomUserLinkText).not.toBe('');
 
     // Click on the user link
     await randomUserLink.click();
