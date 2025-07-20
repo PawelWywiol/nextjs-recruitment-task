@@ -103,6 +103,28 @@ To run the end-to-end tests, you can use the following command:
 npm run test:e2e
 ```
 
+## Scripts
+
+```bash
+{
+  "scripts": {
+    "dev": "next dev --turbopack", # Run app in development mode
+    "build": "next build", # Build app for production
+    "start": "next start", # Start app in production mode
+    "lint": "biome lint", # Lint the codebase using Biome
+    "format": "biome format --write .", # Format the codebase using Biome
+    "check": "biome check --write .", # Check the codebase using Biome
+    "generate-types": "prisma generate", # Generate Prisma types
+    "test": "vitest", # Run unit tests using Vitest
+    "test:cov": "vitest run --coverage", # Run unit tests with coverage
+    "test:e2e": "playwright test --config=playwright.config.ts", # Run end-to-end tests using Playwright
+    "test:e2e:raport": "playwright show-report", # Show the end-to-end test report
+    "type-check": "tsc --noEmit", # Type check the codebase using TypeScript
+    "prepare": "husky" # Prepare Husky hooks
+  },
+}
+```
+
 ## Task
 
 Create a NextJS application which allows you to manage users' addresses. The database schema with sample records is provided for you, you can set it up by running:
