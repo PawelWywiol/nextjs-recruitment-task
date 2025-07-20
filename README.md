@@ -9,6 +9,11 @@ cp .env.example .env.local
 ```
 
 ```bash
+# run db container
+docker compose up -d
+```
+
+```bash
 npm install
 npm run generate-types
 ```
@@ -23,6 +28,11 @@ To run the production environment, you also need to set up your environment vari
 
 ```bash
 cp .env.example .env
+```
+
+```bash
+# run db container
+docker compose up -d
 ```
 
 ```bash
