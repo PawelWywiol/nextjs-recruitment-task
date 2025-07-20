@@ -18,17 +18,19 @@ export const AddressListItem = ({
         {[street, buildingNumber, postCode, city, countryCode].filter(Boolean).join(', ')}
       </small>
     </span>
-    <AddressContextMenu
-      item={{
-        street,
-        buildingNumber,
-        postCode,
-        city,
-        countryCode,
-        addressType,
-        validFrom,
-        userId,
-      }}
-    />
+    <span className="relative">
+      <AddressContextMenu
+        item={{
+          street,
+          buildingNumber,
+          postCode,
+          city,
+          countryCode,
+          addressType,
+          validFrom,
+          userId,
+        }}
+      />
+    </span>
   </li>
 );

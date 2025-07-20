@@ -28,7 +28,9 @@ export const UserContextMenu = () => (
 const UserListItem = ({ item: { id, firstName, lastName } }: { item: GetUsersItem }) => (
   <li key={id} className="flex flex-row items-center justify-between">
     <Link href={`/user/${id}/1`}>{[firstName, lastName].filter(Boolean).join(' ')}</Link>
-    <UserContextMenu />
+    <div className="relative">
+      <UserContextMenu />
+    </div>
   </li>
 );
 
