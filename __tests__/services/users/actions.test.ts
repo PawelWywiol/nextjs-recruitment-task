@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import prisma from '@/lib/prisma';
 import { getUser, getUsers } from '@/services/users/actions';
 import { GET_USERS_PAYLOAD, USERS_PER_PAGE } from '@/services/users/config';
 
@@ -12,8 +13,6 @@ vi.mock('@/lib/prisma', () => ({
     },
   },
 }));
-
-import prisma from '@/lib/prisma';
 
 describe('User actions', () => {
   beforeEach(() => {
@@ -65,7 +64,7 @@ describe('User actions', () => {
         total: mockCount,
         page: 2,
         itemsPerPage: 2,
-        pages: 5,
+        pages: USERS_PER_PAGE,
       });
     });
 
@@ -89,15 +88,15 @@ describe('User actions', () => {
   describe('getUser', () => {
     it('should fetch a single user by ID', async () => {
       const mockUser = {
-          id: 1,
-          firstName: 'John',
-          lastName: 'Doe',
-          status: 'ACTIVE',
-          initials: 'JD',
-          email: 'john.doe@example.com',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
+        id: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        status: 'ACTIVE',
+        initials: 'JD',
+        email: 'john.doe@example.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
 

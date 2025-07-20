@@ -1,13 +1,11 @@
 'use server';
 
-import type { z } from 'zod';
-
 import prisma from '@/lib/prisma';
 
 import { GET_USERS_ADDRESSES_PAYLOAD, USERS_ADDRESSES_PER_PAGE } from './config';
 import type { GetUsersAddressesItem } from './types';
 import { normalizeToSeconds } from './utils';
-import { type userAddressSchema, validateUserAddress } from './validation';
+import { type UserAddress, validateUserAddress } from './validation';
 
 export const getUserAddresses = async (
   userId: number,
@@ -38,10 +36,7 @@ export const getUserAddresses = async (
   };
 };
 
-export const upsertUserAddress = async (
-  item: GetUsersAddressesItem,
-  values: z.infer<typeof userAddressSchema>,
-) => {
+export const upsertUserAddress = async (item: GetUsersAddressesItem, values: UserAddress) => {
   const validationResult = validateUserAddress(values);
 
   if (!validationResult.success) {

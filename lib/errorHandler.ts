@@ -17,11 +17,8 @@ export const handleErrors = async <TResultData = unknown>(
     const data = await formCall();
 
     return { isSuccess: true, data };
-  } catch (error) {
+  } catch {
     //TODO: handle known errors, send to Sentry, etc.
-
-    console.error('Error occurred:', error);
-
     return {
       isSuccess: false,
       isUnknownError: true,

@@ -12,6 +12,8 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'json', 'html'],
       include: ['components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'services/**/*.{ts,tsx}'],
+      // Exclude prisma client and UI components from coverage (UI components are generated and not manually written)
+      exclude: ['lib/prisma.ts', 'components/ui/**/*.{ts,tsx}'],
     },
   },
 });
