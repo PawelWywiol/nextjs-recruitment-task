@@ -5,6 +5,8 @@
 To run the development environment, you need to set up your environment variables first. Copy the example environment file:
 
 ```bash
+# copy the example environment file
+# and update it with your local settings
 cp .env.example .env.local
 ```
 
@@ -14,11 +16,14 @@ docker compose up -d
 ```
 
 ```bash
+# install dependencies
 npm install
+# generate types
 npm run generate-types
 ```
 
 ```bash
+# run the Next.js app in development mode
 npm run dev
 ```
 
@@ -27,44 +32,58 @@ npm run dev
 To run the production environment, you also need to set up your environment variables. Copy the example environment file:
 
 ```bash
+# copy the example environment file
+# and update it with your production settings
 cp .env.example .env
 ```
 
 ```bash
-# run db container
+# make sure database is running,
+# you can use the same command as in development
+# or run the db container with production settings
 docker compose up -d
 ```
 
 ```bash
+# install dependencies and generate types
 npm install
 npm run generate-types
+
+# build the Next.js app
 npm run build
+
+# run the Next.js app in production mode
 npm run start
 ```
 
 ## Build Docker Image and Run Container
 
+To build the Docker image and run the container, you can use the following commands. Make sure to set the `DATABASE_URL` environment variable in your `.env` file or pass it directly when building the image.
+
 ```bash
-docker build -t nextjs-recruitment-task .
+# build the Docker image
+export $(grep -v '^#' .env | xargs)
+docker build -t nextjs-recruitment-task . --build-arg DATABASE_URL=$DATABASE_URL
 ```
 
 ```bash
+# run the Docker container with the environment variables
 docker run --env-file .env -p 3000:3000 nextjs-recruitment-task
 ```
 
-or using Docker Compose:
+## Docker Compose for Production
 
 ```bash
-# export DATABASE_URL to connect to the database in build stage
-export DATABASE_URL=postgresql://myuser:mypassword@host.docker.internal:5432/mydatabase
-
-# run db container
+# make sure database is running, you can use the same command as in development
 docker compose up -d
+```
 
-# build and run the Next.js app
+```bash
+# build the Docker image with production settings
+export $(grep -v '^#' .env | xargs)
 docker compose -f docker-compose.production.yml build --no-cache --build-arg DATABASE_URL=$DATABASE_URL
 
-# run the Next.js app
+# run the Docker container with production settings
 docker compose -f docker-compose.production.yml up -d
 ```
 
