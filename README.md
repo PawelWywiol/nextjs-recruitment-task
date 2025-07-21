@@ -111,6 +111,125 @@ unset DATABASE_URL
 docker compose -f docker-compose.production.yml up -d
 ```
 
+## Deployment
+
+To deploy the application, you can use any cloud provider that supports Docker containers. The steps generally include:
+
+1. Build the Docker image as described above.
+2. Push the Docker image to a container registry (e.g., Docker Hub, AWS ECR, Google Container Registry).
+3. Create a new container instance in your cloud provider using the pushed Docker image.
+4. Set the environment variables in your cloud provider's container settings, ensuring that the `DATABASE_URL` is correctly configured.
+5. Expose the necessary ports (e.g., port 3000 for the Next.js app).
+6. Optionally, set up a reverse proxy (e.g., Nginx) to handle HTTPS and route traffic to your application.
+
+## Example Deployment with Kubernetes
+
+Push the Docker image to a container registry:
+
+```bash
+docker push <your-dockerhub-username>/<docker-image-name>:<docker-image-tag>
+```
+
+Create a Kubernetes deployment YAML file (e.g., `deployment.yaml`):
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-recruitment-task
+  labels:
+    app: nextjs-recruitment-task
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nextjs-recruitment-task
+  template:
+    metadata:
+      labels:
+        app: nextjs-recruitment-task
+    spec:
+      containers:
+        - name: nextjs-recruitment-task
+          image: <your-dockerhub-username>/<docker-image-name>:<docker-image-tag>
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          env:
+            - name: PORT
+              value: "3000"
+```
+
+Create a Kubernetes service YAML file (e.g., `service.yaml`):
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextjs-recruitment-task
+spec:
+  selector:
+    app: nextjs-recruitment-task
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+```
+
+Example Ingress configuration (if using Nginx Ingress Controller):
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextjs-recruitment-task
+spec:
+  rules:
+    - host: nextjs-recruitment-task.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: nextjs-recruitment-task
+                port:
+                  number: 80
+```
+
+Apply the deployment and service to your Kubernetes cluster:
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+# or if you have all YAML files in a directory
+# kubectl apply -f .
+```
+
+Basic `kubectl` commands to manage your deployment:
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+kubectl apply -f .
+kubectl get nodes
+kubectl get pods
+kubectl get services
+kubectl logs <pod-name>
+kubectl exec -it <pod-name> -- bash
+kubectl delete deployment nextjs-recruitment-task
+kubectl delete service nextjs-recruitment-task
+kubectl scale deployment nextjs-recruitment-task --replicas=5
+```
+
 ## Testing
 
 To run the tests, you can use the following command:
