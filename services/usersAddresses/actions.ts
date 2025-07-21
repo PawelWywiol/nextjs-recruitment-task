@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 
 import { GET_USERS_ADDRESSES_PAYLOAD, USERS_ADDRESSES_PER_PAGE } from './config';
 import type { GetUsersAddressesItem } from './types';
-import { normalizeToSeconds } from './utils';
+import { normalizeDateToSeconds, resolveDateRangeInSeconds } from './utils';
 import { type UserAddress, validateUserAddress } from './validation';
 
 export const getUserAddresses = async (
@@ -39,76 +39,76 @@ export const getUserAddresses = async (
 export const upsertUserAddress = async (item: GetUsersAddressesItem, values: UserAddress) => {
   const validationResult = validateUserAddress(values);
 
-  if (!validationResult.success) {
-    return validationResult;
+  if (!validationResult.success || !validationResult.data) {
+    throw new Error('Validation error. Please check your input.');
   }
 
   const data = validationResult.data;
-
-  if (!data) {
-    return {
-      success: false,
-      errors: { form: 'Invalid form data' },
-    };
-  }
 
   const existing = await prisma.usersAddress.findFirst({
     where: {
       userId: item.userId,
       addressType: item.addressType,
-      validFrom: {
-        gte: new Date(item.validFrom.getTime() - 1000),
-        lt: new Date(item.validFrom.getTime() + 1000),
-      },
+      validFrom: resolveDateRangeInSeconds(item.validFrom),
     },
   });
 
-  const userAddress = await prisma.usersAddress.upsert({
-    where: {
-      userId_addressType_validFrom: {
-        userId: existing?.userId || data.userId,
-        addressType: existing?.addressType || data.addressType,
-        validFrom: existing?.validFrom || normalizeToSeconds(data.validFrom),
+  if (existing) {
+    const newData = await prisma.usersAddress.updateMany({
+      where: {
+        userId: existing.userId,
+        addressType: existing.addressType,
+        validFrom: resolveDateRangeInSeconds(existing.validFrom),
       },
-    },
-    create: {
-      ...data,
-      validFrom: normalizeToSeconds(data.validFrom),
-    },
-    update: {
-      postCode: data.postCode,
-      city: data.city,
-      countryCode: data.countryCode,
-      street: data.street,
-      buildingNumber: data.buildingNumber,
-    },
-  });
+      data: {
+        ...data,
+        validFrom: normalizeDateToSeconds(data.validFrom),
+      },
+    });
 
-  if (!userAddress) {
-    return {
-      success: false,
-      errors: { form: 'Failed to save address' },
-    };
+    if (!newData.count) {
+      const blockerData = await prisma.usersAddress.findFirst({
+        where: {
+          userId: item.userId,
+          addressType: item.addressType,
+          validFrom: resolveDateRangeInSeconds(item.validFrom),
+        },
+      });
+
+      if (blockerData) {
+        throw new Error('Address already exists for this user and address type.');
+      }
+
+      throw new Error('Failed to update address.');
+    }
+
+    return data;
   }
 
-  return {
-    success: true,
-    data: userAddress,
-  };
+  await prisma.usersAddress.create({
+    data: {
+      ...data,
+      userId: item.userId,
+      addressType: item.addressType,
+      validFrom: normalizeDateToSeconds(data.validFrom),
+    },
+  });
+
+  return data;
 };
 
 export const deleteUserAddress = async (item: GetUsersAddressesItem) => {
-  await prisma.usersAddress.delete({
+  const deleted = await prisma.usersAddress.deleteMany({
     where: {
-      userId_addressType_validFrom: {
-        userId: item.userId,
-        addressType: item.addressType,
-        validFrom: item.validFrom,
-      },
+      userId: item.userId,
+      addressType: item.addressType,
+      validFrom: resolveDateRangeInSeconds(item.validFrom),
     },
   });
 
-  return {
-    success: true,
-  };
+  if (deleted.count === 0) {
+    throw new Error('Address not found or already deleted');
+  }
+
+  return { success: true };
 };

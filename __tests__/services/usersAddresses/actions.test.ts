@@ -11,6 +11,7 @@ import {
   USERS_ADDRESSES_PER_PAGE,
 } from '@/services/usersAddresses/config';
 import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import { normalizeDateToSeconds, resolveDateRangeInSeconds } from '@/services/usersAddresses/utils';
 import type { UserAddress } from '@/services/usersAddresses/validation';
 
 vi.mock('@/lib/prisma', () => ({
@@ -18,9 +19,10 @@ vi.mock('@/lib/prisma', () => ({
     usersAddress: {
       findMany: vi.fn(),
       findFirst: vi.fn(),
-      upsert: vi.fn(),
+      create: vi.fn(),
+      updateMany: vi.fn(),
       count: vi.fn(),
-      delete: vi.fn(),
+      deleteMany: vi.fn(),
     },
   },
 }));
@@ -133,12 +135,9 @@ describe('UserAddresses Actions', () => {
     };
 
     it('should return validation errors if validation fails', async () => {
-      const result = await upsertUserAddress(mockItem, mockValues);
-
-      expect(result).toEqual({
-        success: false,
-        errors: { form: 'Failed to save address' },
-      });
+      await expect(upsertUserAddress(mockItem, { ...mockValues, postCode: '' })).rejects.toThrow(
+        'Validation error. Please check your input.',
+      );
     });
 
     it('should find and update an existing address', async () => {
@@ -150,13 +149,15 @@ describe('UserAddresses Actions', () => {
       };
 
       const mockUpdated = {
-        ...mockExisting,
+        ...mockItem,
         city: 'New City',
         street: 'New Street',
       };
 
       vi.mocked(prisma.usersAddress.findFirst).mockResolvedValue(mockExisting);
-      vi.mocked(prisma.usersAddress.upsert).mockResolvedValue(mockUpdated);
+      vi.mocked(prisma.usersAddress.updateMany).mockResolvedValue({
+        count: 1,
+      });
 
       const result = await upsertUserAddress(mockItem, mockValues);
 
@@ -164,34 +165,25 @@ describe('UserAddresses Actions', () => {
         where: {
           userId: 1,
           addressType: 'HOME',
-          validFrom: expect.any(Object),
+          validFrom: resolveDateRangeInSeconds(mockItem.validFrom),
         },
       });
 
-      expect(prisma.usersAddress.upsert).toHaveBeenCalledWith({
+      expect(prisma.usersAddress.updateMany).toHaveBeenCalledWith({
         where: {
-          userId_addressType_validFrom: {
-            userId: 1,
-            addressType: 'HOME',
-            validFrom: mockExisting.validFrom,
-          },
+          userId: mockExisting.userId,
+          addressType: mockExisting.addressType,
+          validFrom: resolveDateRangeInSeconds(mockExisting.validFrom),
         },
-        create: {
-          ...mockValues,
-          validFrom: expect.any(Date),
-        },
-        update: {
-          postCode: '12345',
-          city: 'New City',
-          countryCode: 'USA',
-          street: 'New Street',
-          buildingNumber: '123',
+        data: {
+          ...mockUpdated,
+          validFrom: normalizeDateToSeconds(mockUpdated.validFrom),
         },
       });
 
       expect(result).toEqual({
-        success: true,
-        data: mockUpdated,
+        ...mockUpdated,
+        validFrom: '2023-01-01T00:00:00Z',
       });
     });
 
@@ -206,42 +198,24 @@ describe('UserAddresses Actions', () => {
       };
 
       vi.mocked(prisma.usersAddress.findFirst).mockResolvedValue(null);
-      vi.mocked(prisma.usersAddress.upsert).mockResolvedValue(mockCreated);
+      vi.mocked(prisma.usersAddress.create).mockResolvedValue(mockCreated);
 
       const result = await upsertUserAddress(mockItem, mockValues);
 
       expect(prisma.usersAddress.findFirst).toHaveBeenCalled();
 
-      expect(prisma.usersAddress.upsert).toHaveBeenCalledWith({
-        where: {
-          userId_addressType_validFrom: {
-            userId: 1,
-            addressType: 'HOME',
-            validFrom: expect.any(Date),
-          },
-        },
-        create: {
+      expect(prisma.usersAddress.create).toHaveBeenCalledWith({
+        data: {
           ...mockValues,
-          validFrom: expect.any(Date),
+          validFrom: normalizeDateToSeconds(mockValues.validFrom),
         },
-        update: expect.any(Object),
       });
 
       expect(result).toEqual({
-        success: true,
-        data: mockCreated,
-      });
-    });
-
-    it('should handle failure to save address', async () => {
-      vi.mocked(prisma.usersAddress.findFirst).mockResolvedValue(null);
-      vi.mocked(prisma.usersAddress.upsert);
-
-      const result = await upsertUserAddress(mockItem, mockValues);
-
-      expect(result).toEqual({
-        success: false,
-        errors: { form: 'Failed to save address' },
+        ...mockItem,
+        city: 'New City',
+        street: 'New Street',
+        validFrom: '2023-01-01T00:00:00Z',
       });
     });
   });
@@ -259,27 +233,46 @@ describe('UserAddresses Actions', () => {
         buildingNumber: '123',
       };
 
-      vi.mocked(prisma.usersAddress.delete).mockResolvedValue({
-        ...mockItem,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      vi.mocked(prisma.usersAddress).deleteMany = vi.fn().mockResolvedValue({
+        count: 1,
       });
 
       const result = await deleteUserAddress(mockItem);
 
-      expect(prisma.usersAddress.delete).toHaveBeenCalledWith({
+      expect(prisma.usersAddress.deleteMany).toHaveBeenCalledWith({
         where: {
-          userId_addressType_validFrom: {
-            userId: 1,
-            addressType: 'HOME',
-            validFrom: mockItem.validFrom,
-          },
+          userId: 1,
+          addressType: 'HOME',
+          validFrom: resolveDateRangeInSeconds(mockItem.validFrom),
         },
       });
 
       expect(result).toEqual({
         success: true,
       });
+    });
+
+    it('should throw error when no addresses were deleted', async () => {
+      const nonExistingUserId = -1;
+
+      const mockItem: GetUsersAddressesItem = {
+        userId: nonExistingUserId,
+        addressType: 'HOME',
+        validFrom: new Date('2023-01-01T00:00:00Z'),
+        postCode: '12345',
+        city: 'Test City',
+        countryCode: 'USA',
+        street: 'Test Street',
+        buildingNumber: '123',
+      };
+
+      vi.mocked(prisma.usersAddress).deleteMany = vi.fn().mockResolvedValue({
+        count: 0,
+      });
+
+      await expect(deleteUserAddress(mockItem)).rejects.toThrow(
+        'Address not found or already deleted',
+      );
     });
   });
 });

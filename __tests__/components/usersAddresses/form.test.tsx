@@ -37,15 +37,6 @@ describe('UserAddressForm', () => {
       buildingNumber: '1',
     };
 
-    vi.mocked(upsertUserAddress).mockResolvedValue({
-      success: true,
-      data: {
-        ...item,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
     render(<UserAddressForm item={item} />);
 
     expect(screen.getByLabelText('Address Type')).toBeDefined();
