@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { handleErrors } from '@/lib/errorHandler';
 import { getUser } from '@/services/users/actions';
 
 import { UserAddresses } from '@/components/usersAddresses/userAddresses';
@@ -15,11 +16,11 @@ export default async function UserAddressesPage(props: {
     return notFound();
   }
 
-  const user = await getUser(id);
+  const user = await handleErrors(() => getUser(id));
 
-  if (!user) {
+  if (!user.isSuccess || !user.data) {
     return notFound();
   }
 
-  return <UserAddresses user={user} page={page} />;
+  return <UserAddresses user={user.data} page={page} />;
 }
