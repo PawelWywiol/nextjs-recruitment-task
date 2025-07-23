@@ -1,3 +1,25 @@
+## General Information
+
+This application was developed as part of a recruitment task. It is a modular and extensible CRUD system built with Next.js (App Router), Prisma, PostgreSQL, and modern development tooling.
+
+### Error Handling
+
+In this project, `try/catch` blocks are intentionally omitted in most asynchronous functions and server actions. Instead, a centralized `errorHandler` utility is used to ensure:
+
+- **Cleaner and more readable code** – asynchronous logic is easier to follow without repetitive error-handling logic.
+- **Consistency** – all errors are treated and formatted in a uniform way.
+- **Extendability** – it is easier to integrate external tools such as **Sentry**, **telemetry**, or **custom logging** solutions from a single place.
+- **Scalability** – centralized error handling simplifies debugging and maintenance as the application grows.
+
+This approach is especially useful in applications with many similar asynchronous operations (e.g., CRUD operations), as it avoids boilerplate and enables cross-cutting concerns (like error logging) to be managed in one location.
+
+The `handleErrors` function wraps an async call and returns a result object with either:
+
+- `{ isSuccess: true, data }` on success
+- or `{ isSuccess: false, isUnknownError, error }` on failure.
+
+The result object is then processed at the component level to handle error display or feedback, without the need to `try/catch` every function.
+
 ## Getting Started
 
 ### Run Development Environment
