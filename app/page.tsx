@@ -1,5 +1,5 @@
-import { Users } from '@/components/users/users';
+import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  return <Users page={1} />;
+  redirect('/users/1');
 }
