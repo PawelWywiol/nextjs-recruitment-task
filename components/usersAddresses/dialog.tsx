@@ -1,6 +1,6 @@
 import type { UserAddress } from '@/services/usersAddresses/types';
 
-import { UserAddressForm } from './form';
+import { UserAddressForm } from './form/form';
 
 import {
   Dialog,

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { upsertUserAddress } from '@/services/usersAddresses/actions';
 import type { UserAddress } from '@/services/usersAddresses/types';
 
-import { UserAddressForm } from '@/components/usersAddresses/form';
+import { UserAddressForm } from '@/components/usersAddresses/form/form';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
