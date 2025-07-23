@@ -116,8 +116,8 @@ export const upsertUserAddress = async (
         },
       });
 
-      revalidatePath(`/user/${validItem.userId}`);
-      revalidatePath(`/user/${validItem.userId}/[page]`);
+      revalidatePath(`/user/${validItem.userId}`, 'layout');
+      revalidatePath(`/user/${validItem.userId}/[page]`, 'page');
 
       if (blockerData) {
         throw new Error('Address already exists for this user and address type.');
@@ -126,8 +126,8 @@ export const upsertUserAddress = async (
       throw new Error('Failed to update address.');
     }
 
-    revalidatePath(`/user/${validItem.userId}`);
-    revalidatePath(`/user/${validItem.userId}/[page]`);
+    revalidatePath(`/user/${validItem.userId}`, 'layout');
+    revalidatePath(`/user/${validItem.userId}/[page]`, 'page');
 
     return validValues;
   }
@@ -169,6 +169,9 @@ export const deleteUserAddress = async (item: UserAddress): Promise<boolean> => 
   if (deleted.count === 0) {
     throw new Error('Address not found or already deleted');
   }
+
+  revalidatePath(`/user/${validItem.userId}`, 'layout');
+  revalidatePath(`/user/${validItem.userId}/[page]`, 'page');
 
   return true;
 };

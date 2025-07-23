@@ -1,8 +1,4 @@
-'use client';
-
 import { EllipsisVerticalIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
 
 import { handleErrors } from '@/lib/errorHandler';
 import { deleteUserAddress } from '@/services/usersAddresses/actions';
@@ -20,36 +16,26 @@ import {
 } from '../ui/dropdown-menu';
 
 export const AddressContextMenu = ({ item }: { item: UserAddress }) => {
-  const [isPending, setPending] = useState(false);
-  const [isTransitionStarted, startTransition] = useTransition();
-  const router = useRouter();
-
-  const isMutating = isPending || isTransitionStarted;
-
   const handleDelete = async () => {
-    setPending(true);
+    'use server';
     await handleErrors(() => deleteUserAddress(item));
-    startTransition(router.refresh);
-    setPending(false);
   };
 
   return (
     <EditUserAddressDialog item={item}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" disabled={isMutating}>
+          <Button variant="outline">
             <EllipsisVerticalIcon />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DialogTrigger asChild disabled={isMutating}>
+          <DialogTrigger asChild>
             <DropdownMenuItem>
               <span>Edit</span>
             </DropdownMenuItem>
           </DialogTrigger>
-          <DropdownMenuItem onClick={handleDelete} disabled={isMutating}>
-            Delete
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </EditUserAddressDialog>
