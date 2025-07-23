@@ -6,7 +6,7 @@ import { useState, useTransition } from 'react';
 
 import { handleErrors } from '@/lib/errorHandler';
 import { deleteUserAddress } from '@/services/usersAddresses/actions';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 
 import { EditUserAddressDialog } from './dialog';
 
@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-export const AddressContextMenu = ({ item }: { item: GetUsersAddressesItem }) => {
+export const AddressContextMenu = ({ item }: { item: UserAddress }) => {
   const [isPending, setPending] = useState(false);
   const [isTransitionStarted, startTransition] = useTransition();
   const router = useRouter();
@@ -44,11 +44,11 @@ export const AddressContextMenu = ({ item }: { item: GetUsersAddressesItem }) =>
         <DropdownMenuContent>
           <DialogTrigger asChild disabled={isMutating}>
             <DropdownMenuItem>
-              <span>{'Edit'}</span>
+              <span>Edit</span>
             </DropdownMenuItem>
           </DialogTrigger>
           <DropdownMenuItem onClick={handleDelete} disabled={isMutating}>
-            {'Delete'}
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

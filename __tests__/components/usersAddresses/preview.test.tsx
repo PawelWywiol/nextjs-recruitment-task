@@ -1,16 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
-import type { UserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddress } from '@/services/usersAddresses/validation';
 
 import { UsersAddressesPreview } from '@/components/usersAddresses/preview';
 
 describe('UsersAddressesPreview', () => {
   test('renders UsersAddressesPreview', () => {
-    const item: UserAddress = {
+    const item: ValidUserAddress = {
       userId: 1,
       addressType: 'HOME',
-      validFrom: new Date().toISOString(),
+      validFrom: new Date(),
       postCode: '12345',
       city: 'Test City',
       countryCode: 'POL',

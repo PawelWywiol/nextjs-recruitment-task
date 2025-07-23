@@ -24,8 +24,8 @@ describe('handleErrors', () => {
 
     expect(result).toEqual({
       isSuccess: false,
-      isUnknownError: true,
-      error: 'An unexpected error occurred',
+      isUnknownError: false,
+      error: 'Test error',
     });
   });
 });

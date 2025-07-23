@@ -1,4 +1,4 @@
-import type { GetUsersAddressesItem } from './types';
+import type { UserAddress } from './types';
 
 export const USERS_ADDRESSES_PER_PAGE = 5;
 
@@ -15,7 +15,7 @@ export const GET_USERS_ADDRESSES_PAYLOAD = {
   },
 } as const;
 
-export const DEFAULT_USER_ADDRESS: GetUsersAddressesItem = {
+export const DEFAULT_USER_ADDRESS: UserAddress = {
   userId: 0,
   addressType: 'HOME',
   validFrom: new Date(),

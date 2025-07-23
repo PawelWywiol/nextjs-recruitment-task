@@ -1,9 +1,9 @@
 import { ChevronLeftIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { GetUsersItem } from '@/services/users/types';
+import type { User } from '@/services/users/types';
 import { DEFAULT_USER_ADDRESS } from '@/services/usersAddresses/config';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 
 import { EditUserAddressDialog } from './dialog';
 
@@ -11,8 +11,8 @@ import { Button } from '../ui/button';
 import { DialogTrigger } from '../ui/dialog';
 import { Header } from '../ui/header';
 
-export const UsersAddressesHeader = ({ user }: { user: GetUsersItem }) => {
-  const item: GetUsersAddressesItem = {
+export const UsersAddressesHeader = ({ user }: { user: User }) => {
+  const item: UserAddress = {
     ...DEFAULT_USER_ADDRESS,
     userId: user.id,
   };
@@ -29,7 +29,7 @@ export const UsersAddressesHeader = ({ user }: { user: GetUsersItem }) => {
       </div>
       <EditUserAddressDialog item={item}>
         <DialogTrigger asChild>
-          <Button>{'Create Address'}</Button>
+          <Button>Create Address</Button>
         </DialogTrigger>
       </EditUserAddressDialog>
     </Header>

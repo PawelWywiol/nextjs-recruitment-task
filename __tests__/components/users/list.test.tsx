@@ -1,13 +1,27 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
-import type { GetUsersItem } from '@/services/users/types';
+import type { User } from '@/services/users/types';
 
 import { UsersList } from '@/components/users/list';
 
-const items: GetUsersItem[] = [
-  { id: 1, firstName: 'John', lastName: 'Doe' },
-  { id: 2, firstName: 'Jane', lastName: 'Smith' },
+const items: User[] = [
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    initials: 'JD',
+    email: 'john.doe@example.com',
+    status: 'ACTIVE',
+  },
+  {
+    id: 2,
+    firstName: 'Jane',
+    lastName: 'Smith',
+    initials: 'JS',
+    email: 'jane.smith@example.com',
+    status: 'INACTIVE',
+  },
 ];
 
 describe('UsersList', () => {

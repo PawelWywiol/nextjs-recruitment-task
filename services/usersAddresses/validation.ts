@@ -1,13 +1,21 @@
 import { z } from 'zod';
 
+import type { HandleErrorsResult } from '@/lib/errorHandler';
+
 import { ISO_COUNTRY_CODE } from './config';
+import type { UserAddress } from './types';
 
 export const userAddressSchema = z.object({
   userId: z.number().int().positive('User ID must be a positive integer'),
   addressType: z
     .enum(['HOME', 'INVOICE', 'POST', 'WORK'], { message: 'Select a valid address type' })
     .describe('Address type must be one of HOME, INVOICE, POST, or WORK'),
-  validFrom: z.iso.datetime('Valid from date must be a valid ISO datetime string'),
+  validFrom: z
+    .date()
+    .refine((date) => !Number.isNaN(date.getTime()), {
+      message: 'Valid from date must be a valid date',
+    })
+    .describe('Valid from date must be a valid date'),
   postCode: z
     .string()
     .min(1, 'Post code is required')
@@ -26,24 +34,25 @@ export const userAddressSchema = z.object({
     .max(60, 'Building number must be at most 60 characters long'),
 });
 
-export type UserAddress = z.infer<typeof userAddressSchema>;
+export type ValidUserAddress = z.infer<typeof userAddressSchema>;
 
-export const isAddressType = (value: string): value is UserAddress['addressType'] => {
+export const isAddressType = (value: string): value is ValidUserAddress['addressType'] => {
   return ['HOME', 'INVOICE', 'POST', 'WORK'].includes(value);
 };
 
-export const validateUserAddress = (values: UserAddress) => {
+export const validateUserAddress = (values: UserAddress): HandleErrorsResult<ValidUserAddress> => {
   const result = userAddressSchema.safeParse(values);
 
   if (!result.success) {
     return {
-      success: false,
-      errors: result.error.flatten().fieldErrors,
+      isSuccess: false,
+      isUnknownError: false,
+      error: z.treeifyError(result.error).errors.join(', '),
     };
   }
 
   return {
-    success: true,
+    isSuccess: true,
     data: result.data,
   };
 };

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { handleErrors } from '@/lib/errorHandler';
 import prisma from '@/lib/prisma';
 import {
   deleteUserAddress,
@@ -10,9 +11,9 @@ import {
   GET_USERS_ADDRESSES_PAYLOAD,
   USERS_ADDRESSES_PER_PAGE,
 } from '@/services/usersAddresses/config';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 import { normalizeDateToSeconds, resolveDateRangeInSeconds } from '@/services/usersAddresses/utils';
-import type { UserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddress } from '@/services/usersAddresses/validation';
 
 vi.mock('@/lib/prisma', () => ({
   default: {
@@ -112,7 +113,7 @@ describe('UserAddresses Actions', () => {
   });
 
   describe('upsertUserAddress', () => {
-    const mockItem: GetUsersAddressesItem = {
+    const mockItem: UserAddress = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date('2023-01-01T00:00:00Z'),
@@ -123,10 +124,10 @@ describe('UserAddresses Actions', () => {
       buildingNumber: '123',
     };
 
-    const mockValues: UserAddress = {
+    const mockValues: ValidUserAddress = {
       userId: 1,
       addressType: 'HOME',
-      validFrom: '2023-01-01T00:00:00Z',
+      validFrom: new Date('2023-01-01T00:00:00Z'),
       postCode: '12345',
       city: 'New City',
       countryCode: 'USA',
@@ -136,7 +137,7 @@ describe('UserAddresses Actions', () => {
 
     it('should return validation errors if validation fails', async () => {
       await expect(upsertUserAddress(mockItem, { ...mockValues, postCode: '' })).rejects.toThrow(
-        'Validation error. Please check your input.',
+        'Validation error. Please check your values data.',
       );
     });
 
@@ -183,7 +184,7 @@ describe('UserAddresses Actions', () => {
 
       expect(result).toEqual({
         ...mockUpdated,
-        validFrom: '2023-01-01T00:00:00Z',
+        validFrom: new Date('2023-01-01T00:00:00Z'),
       });
     });
 
@@ -215,14 +216,14 @@ describe('UserAddresses Actions', () => {
         ...mockItem,
         city: 'New City',
         street: 'New Street',
-        validFrom: '2023-01-01T00:00:00Z',
+        validFrom: new Date('2023-01-01T00:00:00Z'),
       });
     });
   });
 
   describe('deleteUserAddress', () => {
     it('should delete a user address', async () => {
-      const mockItem: GetUsersAddressesItem = {
+      const mockItem: UserAddress = {
         userId: 1,
         addressType: 'HOME',
         validFrom: new Date('2023-01-01T00:00:00Z'),
@@ -237,7 +238,7 @@ describe('UserAddresses Actions', () => {
         count: 1,
       });
 
-      const result = await deleteUserAddress(mockItem);
+      const result = await handleErrors(() => deleteUserAddress(mockItem));
 
       expect(prisma.usersAddress.deleteMany).toHaveBeenCalledWith({
         where: {
@@ -248,14 +249,15 @@ describe('UserAddresses Actions', () => {
       });
 
       expect(result).toEqual({
-        success: true,
+        isSuccess: true,
+        data: true,
       });
     });
 
     it('should throw error when no addresses were deleted', async () => {
-      const nonExistingUserId = -1;
+      const nonExistingUserId = 9999;
 
-      const mockItem: GetUsersAddressesItem = {
+      const mockItem: UserAddress = {
         userId: nonExistingUserId,
         addressType: 'HOME',
         validFrom: new Date('2023-01-01T00:00:00Z'),

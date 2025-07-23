@@ -8,7 +8,7 @@ describe('User Address Validation', () => {
       const validAddress = {
         userId: 1,
         addressType: 'HOME',
-        validFrom: new Date().toISOString(),
+        validFrom: new Date(),
         postCode: '12345',
         city: 'Test City',
         countryCode: 'USA',

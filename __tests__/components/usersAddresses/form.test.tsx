@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { upsertUserAddress } from '@/services/usersAddresses/actions';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 
 import { UserAddressForm } from '@/components/usersAddresses/form';
 
@@ -26,7 +26,7 @@ describe('UserAddressForm', () => {
   test('renders UserAddressForm', async () => {
     const user = userEvent.setup();
 
-    const item: GetUsersAddressesItem = {
+    const item: UserAddress = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date(),
@@ -57,7 +57,7 @@ describe('UserAddressForm', () => {
 
   test('upsertUserAddress should not be called when form is invalid', async () => {
     const user = userEvent.setup();
-    const item: GetUsersAddressesItem = {
+    const item: UserAddress = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date(),

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 
 import { AddressListItem } from '@/components/usersAddresses/listItem';
 
@@ -18,7 +18,7 @@ vi.mock('@/services/usersAddresses/actions', () => ({
 
 describe('AddressListItem', () => {
   test('renders AddressListItem', () => {
-    const item: GetUsersAddressesItem = {
+    const item: UserAddress = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date(),

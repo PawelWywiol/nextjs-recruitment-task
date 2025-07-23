@@ -1,8 +1,8 @@
-import type { UserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddress } from '@/services/usersAddresses/validation';
 
-export const UsersAddressesPreview = ({ item }: { item: UserAddress }) => (
+export const UsersAddressesPreview = ({ item }: { item: ValidUserAddress }) => (
   <div className="flex flex-col gap-2">
-    <h3>{'Address preview'}</h3>
+    <h3>Address preview</h3>
     <div className="flex flex-col gap-2 text-sm p-2 rounded bg-accent">
       <div className="flex flex-row gap-2">
         {[item.street, item.buildingNumber].filter(Boolean).join(' ')}

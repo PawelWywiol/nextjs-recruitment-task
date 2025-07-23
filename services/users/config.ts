@@ -5,6 +5,8 @@ export const GET_USERS_PAYLOAD = {
     id: true,
     firstName: true,
     lastName: true,
-    //TODO: Not all data is needed to display in the table. Update this as needed.
+    initials: true,
+    email: true,
+    status: true,
   },
 } as const;

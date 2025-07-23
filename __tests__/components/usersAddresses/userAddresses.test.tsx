@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { handleErrors } from '@/lib/errorHandler';
-import type { GetUsersItem } from '@/services/users/types';
+import type { User } from '@/services/users/types';
 import { getUserAddresses } from '@/services/usersAddresses/actions';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 
 import { UserAddresses } from '@/components/usersAddresses/userAddresses';
 
@@ -30,13 +30,16 @@ describe('UserAddresses', () => {
   });
 
   test('renders UserAddresses', async () => {
-    const user: GetUsersItem = {
+    const user: User = {
       id: 1,
       firstName: 'John',
       lastName: 'Doe',
+      initials: 'JD',
+      email: 'john@doe@example.com',
+      status: 'ACTIVE',
     };
 
-    const items: GetUsersAddressesItem[] = [
+    const items: UserAddress[] = [
       {
         userId: 1,
         addressType: 'HOME',
@@ -84,10 +87,13 @@ describe('UserAddresses', () => {
   });
 
   test('renders error message on failure', async () => {
-    const user: GetUsersItem = {
+    const user: User = {
       id: 1,
       firstName: 'John',
       lastName: 'Doe',
+      initials: 'JD',
+      email: 'john@doe@example.com',
+      status: 'ACTIVE',
     };
 
     vi.mocked(getUserAddresses).mockRejectedValue(new Error('Database error'));

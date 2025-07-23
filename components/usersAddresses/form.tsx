@@ -11,11 +11,11 @@ import { handleErrors } from '@/lib/errorHandler';
 import { cn } from '@/lib/utils';
 import { upsertUserAddress } from '@/services/usersAddresses/actions';
 import { ISO_COUNTRY_CODES } from '@/services/usersAddresses/config';
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 import {
   isAddressType,
-  type UserAddress,
   userAddressSchema,
+  type ValidUserAddress,
   validateUserAddress,
 } from '@/services/usersAddresses/validation';
 
@@ -51,23 +51,23 @@ const DEFAULT_BUTTON_STATE = {
 
 const BUTTON_STATE_TIMEOUT = 3000;
 
-export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
+export const UserAddressForm = ({ item }: { item: UserAddress }) => {
   const [isTransitionStarted, startTransition] = useTransition();
   const [buttonState, setButtonState] = useState(DEFAULT_BUTTON_STATE);
   const router = useRouter();
 
-  const defaultValues: UserAddress = {
+  const defaultValues: ValidUserAddress = {
     ...item,
     addressType: isAddressType(item.addressType) ? item.addressType : 'HOME',
-    validFrom: item.validFrom ? new Date(item.validFrom).toISOString() : new Date().toISOString(),
+    validFrom: item.validFrom ? new Date(item.validFrom) : new Date(),
   };
 
-  const form = useForm<UserAddress>({
+  const form = useForm<ValidUserAddress>({
     resolver: zodResolver(userAddressSchema),
     defaultValues,
   });
 
-  const onSubmit = async (values: UserAddress) => {
+  const onSubmit = async (values: ValidUserAddress) => {
     setButtonState({
       disabled: true,
       temporary: false,
@@ -78,7 +78,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
 
     const validationResult = validateUserAddress(values);
 
-    if (!validationResult.success) {
+    if (!validationResult.isSuccess) {
       setButtonState({
         disabled: true,
         temporary: true,
@@ -134,7 +134,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="addressType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Address Type'}</FormLabel>
+                <FormLabel>Address Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
@@ -157,13 +157,13 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="validFrom"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Valid From'}</FormLabel>
+                <FormLabel>Valid From</FormLabel>
 
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        variant={'outline'}
+                        variant="outline"
                         className={cn(
                           'w-[240px] pl-3 text-left font-normal',
                           !field.value && 'text-muted-foreground',
@@ -195,7 +195,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="street"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Street'}</FormLabel>
+                <FormLabel>Street</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -208,7 +208,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="buildingNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Building Number'}</FormLabel>
+                <FormLabel>Building Number</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -223,7 +223,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="postCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Post Code'}</FormLabel>
+                <FormLabel>Post Code</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -236,7 +236,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'City'}</FormLabel>
+                <FormLabel>City</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -249,7 +249,7 @@ export const UserAddressForm = ({ item }: { item: GetUsersAddressesItem }) => {
             name="countryCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{'Country'}</FormLabel>
+                <FormLabel>Country</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">

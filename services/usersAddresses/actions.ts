@@ -3,15 +3,29 @@
 import prisma from '@/lib/prisma';
 
 import { GET_USERS_ADDRESSES_PAYLOAD, USERS_ADDRESSES_PER_PAGE } from './config';
-import type { GetUsersAddressesItem } from './types';
+import type { UserAddress } from './types';
 import { normalizeDateToSeconds, resolveDateRangeInSeconds } from './utils';
-import { type UserAddress, validateUserAddress } from './validation';
+import { type ValidUserAddress, validateUserAddress } from './validation';
+
+import type { PaginatedResponse } from '@/types/pagination';
 
 export const getUserAddresses = async (
   userId: number,
   page = 1,
   itemsPerPage = USERS_ADDRESSES_PER_PAGE,
-) => {
+): Promise<PaginatedResponse<UserAddress>> => {
+  if (!Number.isInteger(userId) || userId <= 0) {
+    throw new Error('Invalid user ID provided.');
+  }
+
+  if (!Number.isInteger(page) || page <= 0) {
+    throw new Error('Invalid page number provided.');
+  }
+
+  if (!Number.isInteger(itemsPerPage) || itemsPerPage <= 0) {
+    throw new Error('Invalid items per page number provided.');
+  }
+
   const [items, total] = await Promise.all([
     prisma.usersAddress.findMany({
       skip: (page - 1) * itemsPerPage,
@@ -36,42 +50,63 @@ export const getUserAddresses = async (
   };
 };
 
-export const upsertUserAddress = async (item: GetUsersAddressesItem, values: UserAddress) => {
-  const validationResult = validateUserAddress(values);
+export const upsertUserAddress = async (
+  item: UserAddress,
+  values: ValidUserAddress,
+): Promise<ValidUserAddress> => {
+  const itemValidation = validateUserAddress(item);
+  const valuesValidation = validateUserAddress(values);
 
-  if (!validationResult.success || !validationResult.data) {
-    throw new Error('Validation error. Please check your input.');
+  if (!itemValidation.isSuccess || !itemValidation.data) {
+    throw new Error('Validation error. Please check your item data.');
+  }
+  if (!valuesValidation.isSuccess || !valuesValidation.data) {
+    throw new Error('Validation error. Please check your values data.');
   }
 
-  const data = validationResult.data;
+  const validItem = itemValidation.data;
+  const validValues = valuesValidation.data;
+  const dataValidFromNormalizedValue = normalizeDateToSeconds(validValues.validFrom);
+  const dataValidFromDateRange = resolveDateRangeInSeconds(validValues.validFrom);
+  const itemValidFromDateRange = resolveDateRangeInSeconds(validItem.validFrom);
+
+  if (!dataValidFromNormalizedValue || !dataValidFromDateRange || !itemValidFromDateRange) {
+    throw new Error('Invalid validFrom date provided.');
+  }
 
   const existing = await prisma.usersAddress.findFirst({
     where: {
-      userId: item.userId,
-      addressType: item.addressType,
-      validFrom: resolveDateRangeInSeconds(item.validFrom),
+      userId: validItem.userId,
+      addressType: validItem.addressType,
+      validFrom: itemValidFromDateRange,
     },
   });
 
   if (existing) {
+    const existingValidFromDateRange = resolveDateRangeInSeconds(existing?.validFrom);
+
+    if (!existingValidFromDateRange) {
+      throw new Error('Invalid existing validFrom date.');
+    }
+
     const newData = await prisma.usersAddress.updateMany({
       where: {
         userId: existing.userId,
         addressType: existing.addressType,
-        validFrom: resolveDateRangeInSeconds(existing.validFrom),
+        validFrom: existingValidFromDateRange,
       },
       data: {
-        ...data,
-        validFrom: normalizeDateToSeconds(data.validFrom),
+        ...validValues,
+        validFrom: dataValidFromNormalizedValue,
       },
     });
 
     if (!newData.count) {
       const blockerData = await prisma.usersAddress.findFirst({
         where: {
-          userId: item.userId,
-          addressType: item.addressType,
-          validFrom: resolveDateRangeInSeconds(item.validFrom),
+          userId: validItem.userId,
+          addressType: validItem.addressType,
+          validFrom: itemValidFromDateRange,
         },
       });
 
@@ -82,27 +117,40 @@ export const upsertUserAddress = async (item: GetUsersAddressesItem, values: Use
       throw new Error('Failed to update address.');
     }
 
-    return data;
+    return validValues;
   }
 
   await prisma.usersAddress.create({
     data: {
-      ...data,
-      userId: item.userId,
-      addressType: item.addressType,
-      validFrom: normalizeDateToSeconds(data.validFrom),
+      ...validValues,
+      userId: validItem.userId,
+      addressType: validItem.addressType,
+      validFrom: dataValidFromNormalizedValue,
     },
   });
 
-  return data;
+  return validValues;
 };
 
-export const deleteUserAddress = async (item: GetUsersAddressesItem) => {
+export const deleteUserAddress = async (item: UserAddress): Promise<boolean> => {
+  const itemValidation = validateUserAddress(item);
+
+  if (!itemValidation.isSuccess) {
+    throw new Error(`Validation error. ${itemValidation.error}`);
+  }
+
+  const validItem = itemValidation.data;
+  const itemValidFromDateRange = resolveDateRangeInSeconds(validItem.validFrom);
+
+  if (!itemValidFromDateRange) {
+    throw new Error('Invalid validFrom date provided.');
+  }
+
   const deleted = await prisma.usersAddress.deleteMany({
     where: {
-      userId: item.userId,
-      addressType: item.addressType,
-      validFrom: resolveDateRangeInSeconds(item.validFrom),
+      userId: validItem.userId,
+      addressType: validItem.addressType,
+      validFrom: itemValidFromDateRange,
     },
   });
 
@@ -110,5 +158,5 @@ export const deleteUserAddress = async (item: GetUsersAddressesItem) => {
     throw new Error('Address not found or already deleted');
   }
 
-  return { success: true };
+  return true;
 };

@@ -1,4 +1,4 @@
-import type { GetUsersAddressesItem } from '@/services/usersAddresses/types';
+import type { UserAddress } from '@/services/usersAddresses/types';
 
 import { UserAddressForm } from './form';
 
@@ -14,7 +14,7 @@ export const EditUserAddressDialog = ({
   item,
   children,
 }: {
-  item: GetUsersAddressesItem;
+  item: UserAddress;
   children: React.ReactNode;
 }) => {
   return (
@@ -27,7 +27,7 @@ export const EditUserAddressDialog = ({
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          {'Please fill in the form below to update or create address data.'}
+          Please fill in the form below to update or create address data.
         </DialogDescription>
         <UserAddressForm item={item} />
       </DialogContent>
