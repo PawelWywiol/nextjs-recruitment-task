@@ -3,15 +3,18 @@ import { z } from 'zod';
 import type { HandleErrorsResult } from '@/lib/errorHandler';
 
 export const userSchema = z.object({
-  userId: z.number().int().positive('User ID must be a positive integer'),
-  firstName: z.string().max(60, 'First name must be at most 60 characters long').optional(),
-  lastName: z.string().max(100, 'Last name must be at most 100 characters long'),
-  initials: z.string().max(30, 'Initials must be at most 30 characters long').optional(),
+  userId: z.number().int().positive({ error: 'User ID must be a positive integer' }),
+  firstName: z
+    .string()
+    .max(60, { error: 'First name must be at most 60 characters long' })
+    .optional(),
+  lastName: z.string().max(100, { error: 'Last name must be at most 100 characters long' }),
+  initials: z.string().max(30, { error: 'Initials must be at most 30 characters long' }).optional(),
   email: z
-    .email('Email must be a valid email address')
-    .max(100, 'Email must be at most 100 characters long'),
+    .email({ error: 'Email must be a valid email address' })
+    .max(100, { error: 'Email must be at most 100 characters long' }),
   status: z
-    .enum(['ACTIVE', 'INACTIVE'], 'Status must be either ACTIVE or INACTIVE')
+    .enum(['ACTIVE', 'INACTIVE'], { error: 'Status must be either ACTIVE or INACTIVE' })
     .default('ACTIVE'),
 });
 

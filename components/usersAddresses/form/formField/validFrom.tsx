@@ -41,8 +41,8 @@ export const ValidFromFormField = ({
             <Calendar
               mode="single"
               selected={new Date(field.value)}
-              onSelect={(date) => field.onChange(date ? date.toISOString() : '')}
-              disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+              onSelect={(date) => field.onChange(date ? date : new Date())}
+              disabled={(date) => date < new Date('1900-01-01')}
               captionLayout="dropdown"
             />
           </PopoverContent>

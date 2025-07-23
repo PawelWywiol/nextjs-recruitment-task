@@ -15,6 +15,10 @@ import type { UserAddress } from '@/services/usersAddresses/types';
 import { normalizeDateToSeconds, resolveDateRangeInSeconds } from '@/services/usersAddresses/utils';
 import type { ValidUserAddress } from '@/services/usersAddresses/validation';
 
+vi.mock('next/cache', () => ({
+  revalidatePath: vi.fn(),
+}));
+
 vi.mock('@/lib/prisma', () => ({
   default: {
     usersAddress: {
@@ -137,7 +141,7 @@ describe('UserAddresses Actions', () => {
 
     it('should return validation errors if validation fails', async () => {
       await expect(upsertUserAddress(mockItem, { ...mockValues, postCode: '' })).rejects.toThrow(
-        'Validation error. Please check your values data.',
+        'Validation error.',
       );
     });
 

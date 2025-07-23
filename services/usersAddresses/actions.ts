@@ -1,11 +1,17 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import prisma from '@/lib/prisma';
 
 import { GET_USERS_ADDRESSES_PAYLOAD, USERS_ADDRESSES_PER_PAGE } from './config';
 import type { UserAddress } from './types';
 import { normalizeDateToSeconds, resolveDateRangeInSeconds } from './utils';
-import { type ValidUserAddress, validateUserAddress } from './validation';
+import {
+  type ValidUserAddress,
+  validateUserAddress,
+  validateUserAddressPrimaryKey,
+} from './validation';
 
 import type { PaginatedResponse } from '@/types/pagination';
 
@@ -54,14 +60,14 @@ export const upsertUserAddress = async (
   item: UserAddress,
   values: ValidUserAddress,
 ): Promise<ValidUserAddress> => {
-  const itemValidation = validateUserAddress(item);
+  const itemValidation = validateUserAddressPrimaryKey(item);
   const valuesValidation = validateUserAddress(values);
 
-  if (!itemValidation.isSuccess || !itemValidation.data) {
-    throw new Error('Validation error. Please check your item data.');
+  if (!itemValidation.isSuccess) {
+    throw new Error(['Validation error.', itemValidation.error].filter(Boolean).join(' '));
   }
-  if (!valuesValidation.isSuccess || !valuesValidation.data) {
-    throw new Error('Validation error. Please check your values data.');
+  if (!valuesValidation.isSuccess) {
+    throw new Error(['Validation error.', valuesValidation.error].filter(Boolean).join(' '));
   }
 
   const validItem = itemValidation.data;
@@ -110,12 +116,18 @@ export const upsertUserAddress = async (
         },
       });
 
+      revalidatePath(`/user/${validItem.userId}`);
+      revalidatePath(`/user/${validItem.userId}/[page]`);
+
       if (blockerData) {
         throw new Error('Address already exists for this user and address type.');
       }
 
       throw new Error('Failed to update address.');
     }
+
+    revalidatePath(`/user/${validItem.userId}`);
+    revalidatePath(`/user/${validItem.userId}/[page]`);
 
     return validValues;
   }
@@ -133,7 +145,7 @@ export const upsertUserAddress = async (
 };
 
 export const deleteUserAddress = async (item: UserAddress): Promise<boolean> => {
-  const itemValidation = validateUserAddress(item);
+  const itemValidation = validateUserAddressPrimaryKey(item);
 
   if (!itemValidation.isSuccess) {
     throw new Error(`Validation error. ${itemValidation.error}`);

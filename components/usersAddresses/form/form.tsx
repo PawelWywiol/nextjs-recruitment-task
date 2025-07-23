@@ -18,21 +18,15 @@ import {
 
 import { BUTTON_STATE_TIMEOUT, DEFAULT_BUTTON_STATE } from './form.config';
 import { AddressTypeFormField } from './formField/addressType';
+import { BuildingNumberFormField } from './formField/buildingNumber';
 import { CityFormFiled } from './formField/city';
 import { CountryCodeFormField } from './formField/countryCode';
 import { PostCodeFormField } from './formField/postCode';
+import { StreetFormField } from './formField/street';
 import { ValidFromFormField } from './formField/validFrom';
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { Button } from '../../ui/button';
-import { Input } from '../../ui/input';
 import { UsersAddressesPreview } from '../preview';
 
 export const UserAddressForm = ({ item }: { item: UserAddress }) => {
@@ -117,32 +111,8 @@ export const UserAddressForm = ({ item }: { item: UserAddress }) => {
           <ValidFromFormField form={form} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-          <FormField
-            control={form.control}
-            name="street"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Street</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="buildingNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Building Number</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <StreetFormField form={form} />
+          <BuildingNumberFormField form={form} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
           <PostCodeFormField form={form} />
