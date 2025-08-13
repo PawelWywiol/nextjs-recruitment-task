@@ -251,6 +251,11 @@ npm run test:e2e
     "test:e2e": "playwright test --config=playwright.config.ts", # Run end-to-end tests using Playwright
     "test:e2e:raport": "playwright show-report", # Show the end-to-end test report
     "type-check": "tsc --noEmit", # Type check the codebase using TypeScript
+    "commit": "git-cz", # Commit changes using Commitizen
+    "release": "standard-version", # Release a new version using standard-version
+    "release:minor": "standard-version --release-as minor", # Release a new minor version using standard-version
+    "release:patch": "standard-version --release-as patch", # Release a new patch version using standard-version
+    "release:major": "standard-version --release-as major", # Release a new major version using standard-version
     "prepare": "husky" # Prepare Husky hooks
   },
 }
