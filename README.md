@@ -80,57 +80,23 @@ npm run start
 
 ## Build Docker Image and Run Container
 
-To build the Docker image and run the container, you can use the following commands. Make sure to set the `DATABASE_URL` environment variable in your `.env` file or pass it directly when building the image.
+To build the Docker image and run the container, you can use the following commands. Make sure to set the `DATABASE_URL` environment variable in your `.env` file.
 
 ```bash
-# export environment variables from .env file
-export $(grep -v '^#' .env | xargs)
-# or set DATABASE_URL directly
-# export DATABASE_URL=postgresql://...
-```
-
-```bash
-# build the Docker image
-docker build -t nextjs-recruitment-task . --build-arg DATABASE_URL=$DATABASE_URL
-```
-
-```bash
-# unset the DATABASE_URL variable
-unset DATABASE_URL
-```
-
-```bash
-# run the Docker container with the environment variables
-docker run --env-file .env -p 3000:3000 nextjs-recruitment-task
-```
-
-## Docker Compose for Production
-
-```bash
-# make sure database is running, you can use the same command as in development
+# make sure database is running,
+# you can use the same command as in development
+# or run the db container with production settings
 docker compose up -d
 ```
 
 ```bash
-# export environment variables from .env file
-export $(grep -v '^#' .env | xargs)
-# or set DATABASE_URL directly
-# export DATABASE_URL=postgresql://...
-```
-
-```bash
 # build the Docker image with production settings
-docker compose -f docker-compose.production.yml build --no-cache --build-arg DATABASE_URL=$DATABASE_URL
-```
-
-```bash
-# unset the DATABASE_URL variable
-unset DATABASE_URL
+docker compose --env-file .env -f compose.production.yml build --no-cache
 ```
 
 ```bash
 # run the Docker container with production settings
-docker compose -f docker-compose.production.yml up -d
+docker compose --env-file .env -f compose.production.yml up -d
 ```
 
 ## Deployment

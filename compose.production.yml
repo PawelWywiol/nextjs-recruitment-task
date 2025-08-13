@@ -3,17 +3,18 @@ services:
   nextjs-recruitment-task:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     container_name: nextjs-recruitment-task
     restart: always
     env_file:
       - .env
     ports:
       - '3000:3000'
-    networks:
-      - nextjs-task-network
+# uncomment to enable networking
+#     networks:
+#       - nextjs-task-network
 
-networks:
-  nextjs-task-network:
-    name: nextjs-task-network
-    external: true
+# networks:
+#   nextjs-task-network:
+#     name: nextjs-task-network
+#     external: true
