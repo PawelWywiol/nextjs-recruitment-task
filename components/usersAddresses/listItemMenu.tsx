@@ -2,7 +2,7 @@ import { EllipsisVerticalIcon } from 'lucide-react';
 
 import { handleErrors } from '@/lib/errorHandler';
 import { deleteUserAddress } from '@/services/usersAddresses/actions';
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserAddressPayload } from '@/services/usersAddresses/config';
 
 import { EditUserAddressDialog } from './dialog';
 
@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-export const AddressContextMenu = ({ item }: { item: UserAddress }) => {
+export const AddressContextMenu = ({ item }: { item: UserAddressPayload }) => {
   const handleDelete = async () => {
     'use server';
     await handleErrors(() => deleteUserAddress(item));

@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+const PAGINATION_BUTTON_REGEX = /^\d+$/;
+
 test.describe('Progressive Tests', () => {
   test('Progressive Tests - Main Page', async ({ page }) => {
     await page.goto('/');
@@ -18,7 +20,9 @@ test.describe('Progressive Tests', () => {
     await expect(pagination).toBeVisible();
 
     // Check if pagination has buttons with numbers
-    const paginationButtons = pagination.getByRole('link').filter({ hasText: /^\d+$/ });
+    const paginationButtons = pagination
+      .getByRole('link')
+      .filter({ hasText: PAGINATION_BUTTON_REGEX });
     const paginationButtonsCount = await paginationButtons.count();
     expect(paginationButtonsCount).toBeGreaterThan(0);
 
@@ -119,7 +123,13 @@ test.describe('Progressive Tests', () => {
     await expect(validationErrors).toBeVisible();
 
     // Test random string
-    const randomString = `T_${Math.random().toString(36).substring(2, 6)}`;
+    const RANDOM_STRING_PREFIX = 'T_';
+    const RANDOM_STRING_RADIX = 36;
+    const RANDOM_STRING_SUBSTRING_START = 2;
+    const RANDOM_STRING_SUBSTRING_END = 6;
+    const randomString = `${RANDOM_STRING_PREFIX}${Math.random()
+      .toString(RANDOM_STRING_RADIX)
+      .substring(RANDOM_STRING_SUBSTRING_START, RANDOM_STRING_SUBSTRING_END)}`;
 
     // Fill the form with valid data
     await streetInput.fill(randomString);

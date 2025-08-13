@@ -1,7 +1,7 @@
 import type { useForm } from 'react-hook-form';
 
 import { ISO_COUNTRY_CODES } from '@/services/usersAddresses/config';
-import type { ValidUserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddressPayload } from '@/services/usersAddresses/validation';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import {
@@ -15,7 +15,7 @@ import {
 export const CountryCodeFormField = ({
   form,
 }: {
-  form: ReturnType<typeof useForm<ValidUserAddress>>;
+  form: ReturnType<typeof useForm<ValidUserAddressPayload>>;
 }) => (
   <FormField
     control={form.control}

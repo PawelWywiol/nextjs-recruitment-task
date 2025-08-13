@@ -1,11 +1,14 @@
 'use server';
 
-import { GET_USERS_PAYLOAD, USERS_PER_PAGE } from './config';
-import type { User } from './types';
+import { GET_USER_PAYLOAD, USERS_PER_PAGE, type UserPayload } from './config';
 
+import type { PaginatedResponse } from '@/types/pagination';
 import prisma from '../../lib/prisma';
 
-export const getUsers = async (page = 1, itemsPerPage = USERS_PER_PAGE) => {
+export const getUsers = async (
+  page: number = 1,
+  itemsPerPage: number = USERS_PER_PAGE,
+): Promise<PaginatedResponse<UserPayload>> => {
   if (!Number.isInteger(page) || page <= 0) {
     throw new Error('Invalid page number provided.');
   }
@@ -21,7 +24,7 @@ export const getUsers = async (page = 1, itemsPerPage = USERS_PER_PAGE) => {
       orderBy: {
         createdAt: 'desc',
       },
-      ...GET_USERS_PAYLOAD,
+      ...GET_USER_PAYLOAD,
     }),
     prisma.user.count(),
   ]);
@@ -29,14 +32,14 @@ export const getUsers = async (page = 1, itemsPerPage = USERS_PER_PAGE) => {
   return { items, total, page, itemsPerPage, pages: Math.ceil(total / itemsPerPage) };
 };
 
-export const getUser = async (id: number): Promise<User | null> => {
+export const getUser = async (id: number): Promise<UserPayload | null> => {
   if (!Number.isInteger(id) || id <= 0) {
     throw new Error('Invalid user ID provided.');
   }
 
   const user = await prisma.user.findUnique({
     where: { id },
-    ...GET_USERS_PAYLOAD,
+    ...GET_USER_PAYLOAD,
   });
 
   return user;

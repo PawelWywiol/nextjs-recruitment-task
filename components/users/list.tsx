@@ -1,7 +1,7 @@
 import { EllipsisVerticalIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { User } from '@/services/users/types';
+import type { UserPayload } from '@/services/users/config';
 
 import { Button } from '../ui/button';
 import {
@@ -25,7 +25,7 @@ export const UserContextMenu = () => (
   </DropdownMenu>
 );
 
-const UserListItem = ({ item: { id, firstName, lastName } }: { item: User }) => (
+const UserListItem = ({ item: { id, firstName, lastName } }: { item: UserPayload }) => (
   <li key={id} className="flex flex-row items-center justify-between">
     <Link href={`/user/${id}/1`}>{[firstName, lastName].filter(Boolean).join(' ')}</Link>
     <div className="relative">
@@ -34,7 +34,7 @@ const UserListItem = ({ item: { id, firstName, lastName } }: { item: User }) => 
   </li>
 );
 
-export const UsersList = ({ items = [] }: { items?: User[] }) =>
+export const UsersList = ({ items = [] }: { items?: UserPayload[] }) =>
   items.length > 0 && (
     <ul className="flex flex-col gap-2 w-full">
       {items.map((item) => (

@@ -1,4 +1,4 @@
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserAddressPayload } from '@/services/usersAddresses/config';
 
 import { UserAddressForm } from './form/form';
 
@@ -14,7 +14,7 @@ export const EditUserAddressDialog = ({
   item,
   children,
 }: {
-  item: UserAddress;
+  item: UserAddressPayload;
   children: React.ReactNode;
 }) => {
   return (

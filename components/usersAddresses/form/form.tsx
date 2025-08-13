@@ -3,16 +3,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { type Resolver, useForm } from 'react-hook-form';
 
-import { handleErrors } from '@/lib/errorHandler';
+import { errorResultFlattenMessage, handleErrors } from '@/lib/errorHandler';
 import { cn } from '@/lib/utils';
 import { upsertUserAddress } from '@/services/usersAddresses/actions';
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserAddressPayload } from '@/services/usersAddresses/config';
 import {
   isAddressType,
   userAddressSchema,
-  type ValidUserAddress,
+  type ValidUserAddressPayload,
   validateUserAddress,
 } from '@/services/usersAddresses/validation';
 
@@ -29,23 +29,27 @@ import { Form } from '@/components/ui/form';
 import { Button } from '../../ui/button';
 import { UsersAddressesPreview } from '../preview';
 
-export const UserAddressForm = ({ item }: { item: UserAddress }) => {
+export const UserAddressForm = ({ item }: { item: UserAddressPayload }) => {
   const [isTransitionStarted, startTransition] = useTransition();
   const [buttonState, setButtonState] = useState(DEFAULT_BUTTON_STATE);
   const router = useRouter();
 
-  const defaultValues: ValidUserAddress = {
+  const defaultValues: ValidUserAddressPayload = {
     ...item,
     addressType: isAddressType(item.addressType) ? item.addressType : 'HOME',
     validFrom: item.validFrom ? new Date(item.validFrom) : new Date(),
   };
 
-  const form = useForm<ValidUserAddress>({
-    resolver: zodResolver(userAddressSchema),
+  const resolver: Resolver<ValidUserAddressPayload> = zodResolver(
+    userAddressSchema,
+  ) as unknown as Resolver<ValidUserAddressPayload>;
+
+  const form = useForm<ValidUserAddressPayload>({
+    resolver,
     defaultValues,
   });
 
-  const onSubmit = async (values: ValidUserAddress) => {
+  const onSubmit = async (values: ValidUserAddressPayload) => {
     setButtonState({
       disabled: true,
       temporary: false,
@@ -84,7 +88,7 @@ export const UserAddressForm = ({ item }: { item: UserAddress }) => {
       setButtonState({
         disabled: true,
         temporary: true,
-        label: data.error || 'Unexpected error. Please try again.',
+        label: errorResultFlattenMessage(data) || 'Unexpected error. Please try again.',
         backgroundColor: 'bg-red-500',
         textColor: 'text-white',
       });

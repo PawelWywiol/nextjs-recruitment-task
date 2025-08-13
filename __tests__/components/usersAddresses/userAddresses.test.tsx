@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { handleErrors } from '@/lib/errorHandler';
-import type { User } from '@/services/users/types';
+import { errorResultFlattenMessage, handleErrors } from '@/lib/errorHandler';
+import type { UserPayload } from '@/services/users/config';
 import { getUserAddresses } from '@/services/usersAddresses/actions';
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserAddressPayload } from '@/services/usersAddresses/config';
 
 import { UserAddresses } from '@/components/usersAddresses/userAddresses';
 
@@ -22,6 +22,7 @@ vi.mock('@/services/usersAddresses/actions', () => ({
 
 vi.mock('@/lib/errorHandler', () => ({
   handleErrors: vi.fn(),
+  errorResultFlattenMessage: vi.fn(),
 }));
 
 describe('UserAddresses', () => {
@@ -30,7 +31,7 @@ describe('UserAddresses', () => {
   });
 
   test('renders UserAddresses', async () => {
-    const user: User = {
+    const user: UserPayload = {
       id: 1,
       firstName: 'John',
       lastName: 'Doe',
@@ -39,7 +40,7 @@ describe('UserAddresses', () => {
       status: 'ACTIVE',
     };
 
-    const items: UserAddress[] = [
+    const items: UserAddressPayload[] = [
       {
         userId: 1,
         addressType: 'HOME',
@@ -87,7 +88,7 @@ describe('UserAddresses', () => {
   });
 
   test('renders error message on failure', async () => {
-    const user: User = {
+    const user: UserPayload = {
       id: 1,
       firstName: 'John',
       lastName: 'Doe',
@@ -100,8 +101,9 @@ describe('UserAddresses', () => {
     vi.mocked(handleErrors).mockResolvedValue({
       isSuccess: false,
       isUnknownError: false,
-      error: 'Failed to fetch user addresses',
+      error: { message: ['Failed to fetch user addresses'] },
     });
+    vi.mocked(errorResultFlattenMessage).mockReturnValue('Failed to fetch user addresses');
 
     render(await UserAddresses({ user, page: 1 }));
 

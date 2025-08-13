@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import prisma from '@/lib/prisma';
 import { getUser, getUsers } from '@/services/users/actions';
-import { GET_USERS_PAYLOAD, USERS_PER_PAGE } from '@/services/users/config';
+import { GET_USER_PAYLOAD, USERS_PER_PAGE } from '@/services/users/config';
+
+const UNDEFINED_USER_ID = 999;
 
 vi.mock('@/lib/prisma', () => ({
   default: {
@@ -56,7 +58,7 @@ describe('User actions', () => {
         orderBy: {
           createdAt: 'desc',
         },
-        ...GET_USERS_PAYLOAD,
+        ...GET_USER_PAYLOAD,
       });
 
       expect(result).toEqual({
@@ -80,7 +82,7 @@ describe('User actions', () => {
         orderBy: {
           createdAt: 'desc',
         },
-        ...GET_USERS_PAYLOAD,
+        ...GET_USER_PAYLOAD,
       });
     });
   });
@@ -104,7 +106,7 @@ describe('User actions', () => {
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
-        ...GET_USERS_PAYLOAD,
+        ...GET_USER_PAYLOAD,
       });
 
       expect(result).toEqual(mockUser);
@@ -113,7 +115,7 @@ describe('User actions', () => {
     it('should return null if user not found', async () => {
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
-      const result = await getUser(999);
+      const result = await getUser(UNDEFINED_USER_ID);
 
       expect(result).toBeNull();
     });

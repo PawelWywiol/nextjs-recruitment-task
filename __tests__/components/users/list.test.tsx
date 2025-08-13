@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
-import type { User } from '@/services/users/types';
+import type { UserPayload } from '@/services/users/config';
 
 import { UsersList } from '@/components/users/list';
 
-const items: User[] = [
+const items: UserPayload[] = [
   {
     id: 1,
     firstName: 'John',

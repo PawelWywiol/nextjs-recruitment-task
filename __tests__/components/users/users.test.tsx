@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { handleErrors } from '@/lib/errorHandler';
+import { errorResultFlattenMessage, handleErrors } from '@/lib/errorHandler';
 import { getUsers } from '@/services/users/actions';
 
 import { Users } from '@/components/users/users';
@@ -12,6 +12,7 @@ vi.mock('@/services/users/actions', () => ({
 
 vi.mock('@/lib/errorHandler', () => ({
   handleErrors: vi.fn(),
+  errorResultFlattenMessage: vi.fn(),
 }));
 
 describe('Users', () => {
@@ -63,8 +64,11 @@ describe('Users', () => {
     vi.mocked(handleErrors).mockResolvedValue({
       isSuccess: false,
       isUnknownError: false,
-      error: 'Failed to fetch users',
+      error: {
+        message: ['Failed to fetch users'],
+      },
     });
+    vi.mocked(errorResultFlattenMessage).mockReturnValue('Failed to fetch users');
 
     render(await Users({ page: 1 }));
 

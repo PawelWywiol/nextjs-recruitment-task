@@ -1,6 +1,8 @@
+import type { Prisma } from '@prisma/client';
+
 export const USERS_PER_PAGE = 5;
 
-export const GET_USERS_PAYLOAD = {
+export const GET_USER_PAYLOAD = {
   select: {
     id: true,
     firstName: true,
@@ -10,3 +12,5 @@ export const GET_USERS_PAYLOAD = {
     status: true,
   },
 } as const;
+
+export type UserPayload = Prisma.UserGetPayload<typeof GET_USER_PAYLOAD>;

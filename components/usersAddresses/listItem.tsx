@@ -1,11 +1,11 @@
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserAddressPayload } from '@/services/usersAddresses/config';
 
 import { AddressContextMenu } from './listItemMenu';
 
 export const AddressListItem = ({
   item: { street, buildingNumber, postCode, city, countryCode, addressType, validFrom, userId },
 }: {
-  item: UserAddress;
+  item: UserAddressPayload;
 }) => (
   <li className="flex flex-row items-center justify-between">
     <span className="flex flex-col">

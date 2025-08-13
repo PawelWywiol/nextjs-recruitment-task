@@ -3,7 +3,7 @@ import { CalendarIcon } from 'lucide-react';
 import type { useForm } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';
-import type { ValidUserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddressPayload } from '@/services/usersAddresses/validation';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 export const ValidFromFormField = ({
   form,
 }: {
-  form: ReturnType<typeof useForm<ValidUserAddress>>;
+  form: ReturnType<typeof useForm<ValidUserAddressPayload>>;
 }) => (
   <FormField
     control={form.control}

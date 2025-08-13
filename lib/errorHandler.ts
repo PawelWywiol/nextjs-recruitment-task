@@ -6,12 +6,23 @@ export type HandleErrorsResult<ResultData = unknown> =
   | {
       isSuccess: false;
       isUnknownError: boolean;
-      error: string;
+      error: Record<string, string[] | undefined>;
     };
 
 // biome-ignore lint/correctness/noUnusedFunctionParameters: feature flag for Sentry integration
 const sendErrorToSentry = (error: unknown, label?: string): void => {
   // TODO: Implement Sentry error reporting
+};
+
+export const errorResultFlattenMessage = (
+  error: HandleErrorsResult,
+  separator: string = ', ',
+): string => {
+  if (error.isSuccess) {
+    return '';
+  }
+
+  return Object.values(error.error).flat().filter(Boolean).join(separator);
 };
 
 export const handleErrors = async <ResultData = unknown>(
@@ -31,7 +42,9 @@ export const handleErrors = async <ResultData = unknown>(
       return {
         isSuccess: false,
         isUnknownError: true,
-        error: 'Database connection error. Please try again later.',
+        error: {
+          message: ['Database connection error. Please try again later.'],
+        },
       };
     }
 
@@ -39,7 +52,9 @@ export const handleErrors = async <ResultData = unknown>(
       return {
         isSuccess: false,
         isUnknownError: true,
-        error: 'An unexpected error occurred.',
+        error: {
+          message: ['An unexpected error occurred.'],
+        },
       };
     }
 
@@ -47,14 +62,18 @@ export const handleErrors = async <ResultData = unknown>(
       return {
         isSuccess: false,
         isUnknownError: false,
-        error: errorMessage,
+        error: {
+          message: [errorMessage],
+        },
       };
     }
 
     return {
       isSuccess: false,
       isUnknownError: true,
-      error: 'An unexpected error occurred',
+      error: {
+        message: ['An unexpected error occurred.'],
+      },
     };
   }
 };

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { normalizeDateToSeconds, resolveDateRangeInSeconds } from '@/lib/date/date.utils';
 import { handleErrors } from '@/lib/errorHandler';
 import prisma from '@/lib/prisma';
 import {
@@ -10,10 +11,9 @@ import {
 import {
   GET_USERS_ADDRESSES_PAYLOAD,
   USERS_ADDRESSES_PER_PAGE,
+  type UserAddressPayload,
 } from '@/services/usersAddresses/config';
-import type { UserAddress } from '@/services/usersAddresses/types';
-import { normalizeDateToSeconds, resolveDateRangeInSeconds } from '@/services/usersAddresses/utils';
-import type { ValidUserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddressPayload } from '@/services/usersAddresses/validation';
 
 vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
@@ -117,7 +117,7 @@ describe('UserAddresses Actions', () => {
   });
 
   describe('upsertUserAddress', () => {
-    const mockItem: UserAddress = {
+    const mockItem: UserAddressPayload = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date('2023-01-01T00:00:00Z'),
@@ -128,7 +128,7 @@ describe('UserAddresses Actions', () => {
       buildingNumber: '123',
     };
 
-    const mockValues: ValidUserAddress = {
+    const mockValues: ValidUserAddressPayload = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date('2023-01-01T00:00:00Z'),
@@ -227,7 +227,7 @@ describe('UserAddresses Actions', () => {
 
   describe('deleteUserAddress', () => {
     it('should delete a user address', async () => {
-      const mockItem: UserAddress = {
+      const mockItem: UserAddressPayload = {
         userId: 1,
         addressType: 'HOME',
         validFrom: new Date('2023-01-01T00:00:00Z'),
@@ -261,7 +261,7 @@ describe('UserAddresses Actions', () => {
     it('should throw error when no addresses were deleted', async () => {
       const nonExistingUserId = 9999;
 
-      const mockItem: UserAddress = {
+      const mockItem: UserAddressPayload = {
         userId: nonExistingUserId,
         addressType: 'HOME',
         validFrom: new Date('2023-01-01T00:00:00Z'),

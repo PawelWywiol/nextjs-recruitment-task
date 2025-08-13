@@ -1,4 +1,4 @@
-import type { UserAddress } from './types';
+import type { Prisma } from '@prisma/client';
 
 export const USERS_ADDRESSES_PER_PAGE = 5;
 
@@ -15,7 +15,21 @@ export const GET_USERS_ADDRESSES_PAYLOAD = {
   },
 } as const;
 
-export const DEFAULT_USER_ADDRESS: UserAddress = {
+export type UserAddressPayload = Prisma.UsersAddressGetPayload<typeof GET_USERS_ADDRESSES_PAYLOAD>;
+
+export const GET_USERS_ADDRESSES_PRIMARY_KEYS_PAYLOAD = {
+  select: {
+    userId: true,
+    addressType: true,
+    validFrom: true,
+  },
+} as const;
+
+export type UserAddressPrimaryKeyPayload = Prisma.UsersAddressGetPayload<
+  typeof GET_USERS_ADDRESSES_PRIMARY_KEYS_PAYLOAD
+>;
+
+export const DEFAULT_USER_ADDRESS: UserAddressPayload = {
   userId: 0,
   addressType: 'HOME',
   validFrom: new Date(),
@@ -278,4 +292,6 @@ export const ISO_COUNTRY_CODES = {
   ZWE: 'Zimbabwe',
 } as const;
 
-export const ISO_COUNTRY_CODE = Object.keys(ISO_COUNTRY_CODES);
+export const ISO_COUNTRY_CODES_LIST: string[] = Object.keys(ISO_COUNTRY_CODES);
+
+export type ISOCountryCode = (typeof ISO_COUNTRY_CODES)[keyof typeof ISO_COUNTRY_CODES];

@@ -1,9 +1,8 @@
 import { ChevronLeftIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { User } from '@/services/users/types';
-import { DEFAULT_USER_ADDRESS } from '@/services/usersAddresses/config';
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserPayload } from '@/services/users/config';
+import { DEFAULT_USER_ADDRESS, type UserAddressPayload } from '@/services/usersAddresses/config';
 
 import { EditUserAddressDialog } from './dialog';
 
@@ -11,8 +10,8 @@ import { Button } from '../ui/button';
 import { DialogTrigger } from '../ui/dialog';
 import { Header } from '../ui/header';
 
-export const UsersAddressesHeader = ({ user }: { user: User }) => {
-  const item: UserAddress = {
+export const UsersAddressesHeader = ({ user }: { user: UserPayload }) => {
+  const item: UserAddressPayload = {
     ...DEFAULT_USER_ADDRESS,
     userId: user.id,
   };

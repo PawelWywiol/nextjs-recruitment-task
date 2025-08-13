@@ -2,13 +2,16 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { normalizeDateToSeconds, resolveDateRangeInSeconds } from '@/lib/date/date.utils';
 import prisma from '@/lib/prisma';
 
-import { GET_USERS_ADDRESSES_PAYLOAD, USERS_ADDRESSES_PER_PAGE } from './config';
-import type { UserAddress } from './types';
-import { normalizeDateToSeconds, resolveDateRangeInSeconds } from './utils';
 import {
-  type ValidUserAddress,
+  GET_USERS_ADDRESSES_PAYLOAD,
+  USERS_ADDRESSES_PER_PAGE,
+  type UserAddressPayload,
+} from './config';
+import {
+  type ValidUserAddressPayload,
   validateUserAddress,
   validateUserAddressPrimaryKey,
 } from './validation';
@@ -17,9 +20,9 @@ import type { PaginatedResponse } from '@/types/pagination';
 
 export const getUserAddresses = async (
   userId: number,
-  page = 1,
-  itemsPerPage = USERS_ADDRESSES_PER_PAGE,
-): Promise<PaginatedResponse<UserAddress>> => {
+  page: number = 1,
+  itemsPerPage: number = USERS_ADDRESSES_PER_PAGE,
+): Promise<PaginatedResponse<UserAddressPayload>> => {
   if (!Number.isInteger(userId) || userId <= 0) {
     throw new Error('Invalid user ID provided.');
   }
@@ -57,9 +60,9 @@ export const getUserAddresses = async (
 };
 
 export const upsertUserAddress = async (
-  item: UserAddress,
-  values: ValidUserAddress,
-): Promise<ValidUserAddress> => {
+  item: UserAddressPayload,
+  values: ValidUserAddressPayload,
+): Promise<ValidUserAddressPayload> => {
   const itemValidation = validateUserAddressPrimaryKey(item);
   const valuesValidation = validateUserAddress(values);
 
@@ -144,7 +147,7 @@ export const upsertUserAddress = async (
   return validValues;
 };
 
-export const deleteUserAddress = async (item: UserAddress): Promise<boolean> => {
+export const deleteUserAddress = async (item: UserAddressPayload): Promise<boolean> => {
   const itemValidation = validateUserAddressPrimaryKey(item);
 
   if (!itemValidation.isSuccess) {

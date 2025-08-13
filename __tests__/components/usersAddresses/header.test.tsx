@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 
-import type { User } from '@/services/users/types';
+import type { UserPayload } from '@/services/users/config';
 
 import { UsersAddressesHeader } from '@/components/usersAddresses/header';
 
@@ -18,7 +18,7 @@ vi.mock('@/services/usersAddresses/actions', () => ({
 
 describe('UsersAddressesHeader', () => {
   test('renders UsersAddressesHeader with correct heading', () => {
-    const user: User = {
+    const user: UserPayload = {
       id: 1,
       firstName: 'John',
       lastName: 'Doe',

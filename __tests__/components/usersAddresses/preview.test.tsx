@@ -1,13 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 
-import type { ValidUserAddress } from '@/services/usersAddresses/validation';
+import type { ValidUserAddressPayload } from '@/services/usersAddresses/validation';
 
 import { UsersAddressesPreview } from '@/components/usersAddresses/preview';
 
+const ADDRESS_PREVIEW_REGEX = /Address preview.*Test Street 1.*12345, Test City.*POL/s;
+
 describe('UsersAddressesPreview', () => {
   test('renders UsersAddressesPreview', () => {
-    const item: ValidUserAddress = {
+    const item: ValidUserAddressPayload = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date(),
@@ -26,6 +28,6 @@ describe('UsersAddressesPreview', () => {
 
     const textLines = fullText?.trim();
 
-    expect(textLines).toMatch(/Address preview.*Test Street 1.*12345, Test City.*POL/s);
+    expect(textLines).toMatch(ADDRESS_PREVIEW_REGEX);
   });
 });

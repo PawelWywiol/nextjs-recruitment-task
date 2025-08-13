@@ -1,4 +1,4 @@
-import { handleErrors } from '@/lib/errorHandler';
+import { errorResultFlattenMessage, handleErrors } from '@/lib/errorHandler';
 import { getUsers } from '@/services/users/actions';
 
 import { UsersHeader } from './header';
@@ -10,7 +10,7 @@ export const Users = async ({ page }: { page: number }) => {
   const data = await handleErrors(() => getUsers(page));
 
   if (data.isSuccess === false) {
-    return <div className="text-red-500 text-center">{data.error}</div>;
+    return <div className="text-red-500 text-center">{errorResultFlattenMessage(data)}</div>;
   }
 
   return (

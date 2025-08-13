@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 
-import type { UserAddress } from '@/services/usersAddresses/types';
+import type { UserAddressPayload } from '@/services/usersAddresses/config';
 
 import { Button } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
@@ -22,7 +22,7 @@ vi.mock('@/services/usersAddresses/actions', () => ({
 describe('EditUserAddressDialog', () => {
   test('renders EditUserAddressDialog', async () => {
     const user = userEvent.setup();
-    const item: UserAddress = {
+    const item: UserAddressPayload = {
       userId: 1,
       addressType: 'HOME',
       validFrom: new Date(),

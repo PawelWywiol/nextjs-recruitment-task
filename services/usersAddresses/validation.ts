@@ -2,10 +2,19 @@ import { z } from 'zod';
 
 import type { HandleErrorsResult } from '@/lib/errorHandler';
 
-import { ISO_COUNTRY_CODE } from './config';
-import type { UserAddress } from './types';
+import {
+  ISO_COUNTRY_CODES_LIST,
+  type UserAddressPayload,
+  type UserAddressPrimaryKeyPayload,
+} from './config';
 
-export const userAddressPrimaryKeySchema = z.object({
+const MIN_STRING_LENGTH = 1;
+const MAX_POST_CODE_LENGTH = 6;
+const MAX_CITY_LENGTH = 60;
+const MAX_STREET_LENGTH = 100;
+const MAX_BUILDING_NUMBER_LENGTH = 60;
+
+export const userAddressPrimaryKeySchema: z.ZodSchema<UserAddressPrimaryKeyPayload> = z.object({
   userId: z.number().int().positive({
     error: 'User ID must be a positive integer',
   }),
@@ -17,6 +26,9 @@ export const userAddressPrimaryKeySchema = z.object({
   }),
 });
 
+export type ValidUserAddressPrimaryKeyPayload = z.infer<typeof userAddressPrimaryKeySchema>;
+
+// biome-ignore lint/nursery/useExplicitType: react-hook-form issue https://github.com/react-hook-form/resolvers/issues/782
 export const userAddressSchema = z.object({
   userId: z.number().int().positive({
     error: 'User ID must be a positive integer',
@@ -29,42 +41,47 @@ export const userAddressSchema = z.object({
   }),
   postCode: z
     .string()
-    .min(1, { error: 'Post code is required' })
-    .max(6, { error: 'Post code must be at most 6 characters long' }),
+    .min(MIN_STRING_LENGTH, { error: 'Post code is required' })
+    .max(MAX_POST_CODE_LENGTH, {
+      error: `Post code must be at most ${MAX_POST_CODE_LENGTH} characters long`,
+    }),
   city: z
     .string()
-    .min(1, 'City is required')
-    .max(60, { error: 'City must be at most 60 characters long' }),
-  countryCode: z.enum(ISO_COUNTRY_CODE as [string, ...string[]], {
+    .min(MIN_STRING_LENGTH, 'City is required')
+    .max(MAX_CITY_LENGTH, { error: `City must be at most ${MAX_CITY_LENGTH} characters long` }),
+  countryCode: z.enum(ISO_COUNTRY_CODES_LIST as [string, ...string[]], {
     error: 'Select a valid country code',
   }),
   street: z
     .string()
-    .min(1, { error: 'Street is required' })
-    .max(100, { error: 'Street must be at most 100 characters long' }),
+    .min(MIN_STRING_LENGTH, { error: 'Street is required' })
+    .max(MAX_STREET_LENGTH, {
+      error: `Street must be at most ${MAX_STREET_LENGTH} characters long`,
+    }),
   buildingNumber: z
     .string()
-    .min(1, { error: 'Building number is required' })
-    .max(60, { error: 'Building number must be at most 60 characters long' }),
+    .min(MIN_STRING_LENGTH, { error: 'Building number is required' })
+    .max(MAX_BUILDING_NUMBER_LENGTH, {
+      error: `Building number must be at most ${MAX_BUILDING_NUMBER_LENGTH} characters long`,
+    }),
 });
 
-export type ValidUserAddress = z.infer<typeof userAddressSchema>;
-export type ValidUserAddressPrimaryKey = z.infer<typeof userAddressPrimaryKeySchema>;
+export type ValidUserAddressPayload = z.infer<typeof userAddressSchema>;
 
-export const isAddressType = (value: string): value is ValidUserAddress['addressType'] => {
+export const isAddressType = (value: string): value is ValidUserAddressPayload['addressType'] => {
   return ['HOME', 'INVOICE', 'POST', 'WORK'].includes(value);
 };
 
 export const validateUserAddressPrimaryKey = (
-  value: Partial<UserAddress>,
-): HandleErrorsResult<ValidUserAddressPrimaryKey> => {
+  value: Partial<UserAddressPrimaryKeyPayload>,
+): HandleErrorsResult<ValidUserAddressPrimaryKeyPayload> => {
   const result = userAddressPrimaryKeySchema.safeParse(value);
 
   if (!result.success) {
     return {
       isSuccess: false,
       isUnknownError: false,
-      error: z.treeifyError(result.error).errors.join(', '),
+      error: result.error.flatten().fieldErrors,
     };
   }
 
@@ -74,14 +91,16 @@ export const validateUserAddressPrimaryKey = (
   };
 };
 
-export const validateUserAddress = (values: UserAddress): HandleErrorsResult<ValidUserAddress> => {
+export const validateUserAddress = (
+  values: UserAddressPayload,
+): HandleErrorsResult<ValidUserAddressPayload> => {
   const result = userAddressSchema.safeParse(values);
 
   if (!result.success) {
     return {
       isSuccess: false,
       isUnknownError: false,
-      error: z.treeifyError(result.error).errors.join(', '),
+      error: result.error.flatten().fieldErrors,
     };
   }
 

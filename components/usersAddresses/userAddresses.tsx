@@ -1,5 +1,5 @@
-import { handleErrors } from '@/lib/errorHandler';
-import type { User } from '@/services/users/types';
+import { errorResultFlattenMessage, handleErrors } from '@/lib/errorHandler';
+import type { UserPayload } from '@/services/users/config';
 import { getUserAddresses } from '@/services/usersAddresses/actions';
 
 import { UsersAddressesHeader } from './header';
@@ -7,11 +7,11 @@ import { UsersAddressesList } from './list';
 
 import { Pagination } from '../ui/pagination';
 
-export const UserAddresses = async ({ user, page }: { user: User; page: number }) => {
+export const UserAddresses = async ({ user, page }: { user: UserPayload; page: number }) => {
   const data = await handleErrors(() => getUserAddresses(user.id, page));
 
   if (data.isSuccess === false) {
-    return <div className="text-red-500 text-center">{data.error}</div>;
+    return <div className="text-red-500 text-center">{errorResultFlattenMessage(data)}</div>;
   }
 
   return (
